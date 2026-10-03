@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>初期放量＋OI · 五幣模擬警報時間軸</title>
+<title>初期放量＋OI · 2026年9月五幣模擬警報</title>
 <style>
   :root {
     --bg:#0f1419; --card:#1a222c; --line:#2c3844; --txt:#e7eef5; --muted:#93a4b5;
@@ -47,8 +47,8 @@
 </head>
 <body>
 <main>
-  <h1>初期放量＋合約 OI · 五幣模擬警報</h1>
-  <p class="lead">線上正式規則 <code>quiet_surge_early</code>（現貨 SAGA／GTC／SAND／QNT／MANA）。<b>15 分 K 收盤</b>評估，發送時刻＝該根收盤（台北 UTC+8）。成交額＝該根內每分鐘 <code>close×volume</code> 加總。基準＝<b>前正好 8640 根已完成 15m</b>（90 天）成交額平均。合約持倉用<b>張數</b>（不是 USDT 名目）。這頁是用歷史 K 線與幣安日檔 OI 快照重跑的模擬，不是當時真的有打 Telegram。</p>
+  <h1>初期放量＋合約 OI · 五幣模擬警報（2026年9月）</h1>
+  <p class="lead">線上正式規則 <code>quiet_surge_early</code>（現貨 SAGA／GTC／SAND／QNT／MANA）。<b>15 分 K 收盤</b>評估，發送時刻＝該根收盤（台北 UTC+8）。成交額＝該根內每分鐘 <code>close×volume</code> 加總。基準＝<b>前正好 8640 根已完成 15m</b>（90 天）成交額平均。合約持倉用<b>張數</b>（不是 USDT 名目）。這頁是用歷史 K 線與幣安日檔 OI 快照重跑的模擬，不是當時真的有打 Telegram。<b>只列出發送時間落在 2026 年 9 月（台北）的警報</b>；8 月與 10 月的訊號不列。警報之後的最高價、最低價一路算到各幣手上最新一根 15 分 K，不截在月底。</p>
   <div class="card">
     <h3>觸發（全部同時成立，再套冷卻）</h3>
     <ul class="rules">
@@ -71,7 +71,7 @@
   </tr></thead><tbody></tbody></table></div>
   <p class="note">黃底列在四段參考窗內。歷史 OI 沿用先前回測的幣安 UM 日檔合約張數：每根取收盤時刻最後一筆（含剛好落在收盤），超過 30 分鐘視為沒有。1h 變化與 7 日 z 的算法與正式 worker 相同。日檔收到 2026-10-01（UTC），SAND 10/2 00:00 台北仍在範圍內。QNT 9/23 放量陰線因收漲條件不發。</p>
   <h2>警報收盤買入 100 美金</h2>
-  <p class="note">每筆在<b>該根 15 分 K 收盤價</b>投入 100 美元，各筆各自獨立（不是同一筆資金複利，也沒扣手續費）。之後用 15 分收盤出場：<b>+15 分</b>＝下一根、<b>+30 分</b>＝再下一根（發送時刻都在 15 分邊界，剛好落在收盤，不必改用 1 分 K）、<b>+1 小時</b>＝4 根、<b>+4 小時</b>＝16 根。損益（美元）＝100×報酬率，期末權益＝100×(1+報酬率)。下表是全部加總與中位數。</p>
+  <p class="note">每筆在<b>該根 15 分 K 收盤價</b>投入 100 美元，各筆各自獨立（不是同一筆資金複利，也沒扣手續費）。之後用 15 分收盤出場：<b>+15 分</b>＝下一根、<b>+30 分</b>＝再下一根（發送時刻都在 15 分邊界，剛好落在收盤，不必改用 1 分 K）、<b>+1 小時</b>＝4 根、<b>+4 小時</b>＝16 根。損益（美元）＝100×報酬率，期末權益＝100×(1+報酬率)。<b>之後最高漲幅</b>＝警報收盤之後到最新資料，15 分 K 最高價相對收盤的漲幅；<b>之後最大跌幅</b>＝同一段裡最低價相對收盤的跌幅（含未實現的最差回撤）。這兩個不是出場點。下表是固定持有時間的加總與中位數。</p>
   <div class="wrap" style="max-height:none"><table id="pnlsum"><thead><tr>
     <th class="l">持有</th><th>有效筆數</th><th>報酬中位</th><th>單筆損益中位</th><th>全部損益合計</th><th>單筆權益中位</th><th>全部權益合計</th>
   </tr></thead><tbody></tbody></table></div>
@@ -104,6 +104,8 @@
         <th>+30m</th>
         <th>+1h</th>
         <th>+4h</th>
+        <th>到最新<br>最高漲幅</th>
+        <th>到最新<br>最大跌幅</th>
         <th class="l">備註</th>
       </tr></thead>
       <tbody></tbody>
@@ -112,7 +114,7 @@
   <p class="note" id="foot"></p>
 </main>
 <script>
-const DATA = {"generated": "2026-10-03 13:46", "eval": "2026-08-30 00:15 收盤起 ～ 2026-10-03 13:45（各幣尾端略有不同）", "counts": {"SAGA": 3, "GTC": 1, "SAND": 3, "QNT": 1, "MANA": 3}, "total": 11, "per_day": 0.063946, "median_ret_1d": 0.043569, "pct_up_1d": 0.8182, "median_ret_15m": 0.001316, "median_ret_30m": -0.00357, "median_ret_60m": -0.003825, "median_ret_4h": 0.016332, "stake_usd": 100, "coins": ["SAGA", "GTC", "SAND", "QNT", "MANA"], "n_fwd_1d": 11, "refs": {"saga": {"name": "SAGA 9/15", "hit": true, "n": 1, "first": "2026-09-15 15:30", "window": "2026-09-15 00:00–2026-09-16 06:00"}, "gtc": {"name": "GTC 9/30", "hit": true, "n": 1, "first": "2026-09-30 03:00", "window": "2026-09-30 00:00–2026-09-30 21:00"}, "sand": {"name": "SAND 10/2", "hit": true, "n": 1, "first": "2026-10-02 00:00", "window": "2026-10-02 00:00–2026-10-02 18:00"}, "qnt": {"name": "QNT 9/23–24", "hit": false, "n": 0, "first": null, "window": "2026-09-23 12:00–2026-09-25 00:00"}}, "events": [{"coin": "MANA", "symbol": "MANAUSDT", "send_time": "2026-08-30 11:30", "bar_open": "2026-08-30 11:15", "open": 0.0739, "high": 0.0779, "low": 0.0739, "close": 0.076, "quote_volume": 217295.4598, "baseline": 4834.8662, "multiple": 44.9434, "quiet": 0.164, "quiet4h": 0.151, "ret_bar": 0.028417, "prior_24h": 0.004076, "oi": 39409550.0, "oi_age_min": 0.0, "oi_pct_15m": 0.045363, "oi_pct_1h": 0.050777, "oi_z7": 22.966, "ret_15m": 0.001316, "ret_30m": 0.014474, "ret_60m": 0.007895, "ret_4h": 0.009211, "ret_1d": -0.056579, "px_15m": 0.0761, "px_30m": 0.0771, "px_60m": 0.0766, "px_4h": 0.0767, "note": ""}, {"coin": "MANA", "symbol": "MANAUSDT", "send_time": "2026-09-13 14:30", "bar_open": "2026-09-13 14:15", "open": 0.0776, "high": 0.0788, "low": 0.0775, "close": 0.0787, "quote_volume": 49517.1524, "baseline": 4825.2071, "multiple": 10.2622, "quiet": 0.9431, "quiet4h": 1.4327, "ret_bar": 0.015484, "prior_24h": 0.058743, "oi": 39545913.0, "oi_age_min": 0.0, "oi_pct_15m": 0.005757, "oi_pct_1h": 0.011378, "oi_z7": 2.546, "ret_15m": -0.002541, "ret_30m": -0.005083, "ret_60m": -0.005083, "ret_4h": -0.017789, "ret_1d": -0.025413, "px_15m": 0.0785, "px_30m": 0.0783, "px_60m": 0.0783, "px_4h": 0.0773, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-15 15:30", "bar_open": "2026-09-15 15:15", "open": 0.01844, "high": 0.01957, "low": 0.0183, "close": 0.01924, "quote_volume": 451461.5033, "baseline": 18604.4306, "multiple": 24.2663, "quiet": 2.4825, "quiet4h": 1.4546, "ret_bar": 0.043384, "prior_24h": 0.048919, "oi": 360847873.4, "oi_age_min": 0.0, "oi_pct_15m": 0.037592, "oi_pct_1h": 0.043026, "oi_z7": 4.817, "ret_15m": 0.010915, "ret_30m": -0.016112, "ret_60m": -0.040021, "ret_4h": 0.059252, "ret_1d": 0.04158, "px_15m": 0.01945, "px_30m": 0.01893, "px_60m": 0.01847, "px_4h": 0.02038, "note": "參考日主升 · 窗內第一筆（錨點 09-15 17:37，領先約 127 分）"}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-19 01:00", "bar_open": "2026-09-19 00:45", "open": 0.02066, "high": 0.02245, "low": 0.02058, "close": 0.02143, "quote_volume": 432688.1233, "baseline": 22698.3028, "multiple": 19.0626, "quiet": 2.2931, "quiet4h": 2.7797, "ret_bar": 0.036267, "prior_24h": -0.006724, "oi": 446087935.9, "oi_age_min": 0.0, "oi_pct_15m": 0.084677, "oi_pct_1h": 0.090218, "oi_z7": 16.668, "ret_15m": 0.355576, "ret_30m": 0.227718, "ret_60m": 0.199253, "ret_4h": 0.184321, "ret_1d": 0.181988, "px_15m": 0.02905, "px_30m": 0.02631, "px_60m": 0.0257, "px_4h": 0.02538, "note": ""}, {"coin": "MANA", "symbol": "MANAUSDT", "send_time": "2026-09-19 08:15", "bar_open": "2026-09-19 08:00", "open": 0.0789, "high": 0.0821, "low": 0.0789, "close": 0.0796, "quote_volume": 216067.4994, "baseline": 4538.3118, "multiple": 47.6097, "quiet": 0.5136, "quiet4h": 0.5985, "ret_bar": 0.010152, "prior_24h": 0.0563, "oi": 43805592.0, "oi_age_min": 0.0, "oi_pct_15m": 0.0588, "oi_pct_1h": 0.071234, "oi_z7": 23.417, "ret_15m": 0.005025, "ret_30m": 0.0, "ret_60m": 0.001256, "ret_4h": 0.016332, "ret_1d": 0.041457, "px_15m": 0.08, "px_30m": 0.0796, "px_60m": 0.0797, "px_4h": 0.0809, "note": ""}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-19 08:15", "bar_open": "2026-09-19 08:00", "open": 0.03863, "high": 0.04123, "low": 0.03859, "close": 0.03922, "quote_volume": 321612.7535, "baseline": 9969.1282, "multiple": 32.2609, "quiet": 0.9588, "quiet4h": 1.0766, "ret_bar": 0.01501, "prior_24h": 0.049715, "oi": 151561256.0, "oi_age_min": 0.0, "oi_pct_15m": 0.005032, "oi_pct_1h": 0.018107, "oi_z7": 1.81, "ret_15m": 0.00204, "ret_30m": -0.00357, "ret_60m": -0.003825, "ret_4h": 0.018613, "ret_1d": 0.029067, "px_15m": 0.0393, "px_30m": 0.03908, "px_60m": 0.03907, "px_4h": 0.03995, "note": ""}, {"coin": "QNT", "symbol": "QNTUSDT", "send_time": "2026-09-22 18:15", "bar_open": "2026-09-22 18:00", "open": 67.57, "high": 68.45, "low": 67.51, "close": 68.45, "quote_volume": 69453.6022, "baseline": 6471.2012, "multiple": 10.7327, "quiet": 2.3893, "quiet4h": 2.6271, "ret_bar": 0.012424, "prior_24h": 0.019451, "oi": 55961.9, "oi_age_min": 0.0, "oi_pct_15m": 0.025586, "oi_pct_1h": 0.025903, "oi_z7": 6.032, "ret_15m": 0.002337, "ret_30m": 0.003214, "ret_60m": 0.013879, "ret_4h": 0.059167, "ret_1d": 0.096275, "px_15m": 68.61, "px_30m": 68.67, "px_60m": 69.4, "px_4h": 72.5, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-23 12:45", "bar_open": "2026-09-23 12:30", "open": 0.04043, "high": 0.04321, "low": 0.04043, "close": 0.04314, "quote_volume": 334878.0502, "baseline": 29767.5102, "multiple": 11.2498, "quiet": 1.0629, "quiet4h": 0.8942, "ret_bar": 0.067029, "prior_24h": 0.011509, "oi": 496593527.5, "oi_age_min": 0.0, "oi_pct_15m": 0.007473, "oi_pct_1h": 0.00688, "oi_z7": 1.27, "ret_15m": -0.000464, "ret_30m": 0.018776, "ret_60m": 0.032916, "ret_4h": 0.025962, "ret_1d": 0.051924, "px_15m": 0.04312, "px_30m": 0.04395, "px_60m": 0.04456, "px_4h": 0.04426, "note": ""}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-24 22:30", "bar_open": "2026-09-24 22:15", "open": 0.04213, "high": 0.04299, "low": 0.04213, "close": 0.04292, "quote_volume": 109003.4068, "baseline": 10314.5424, "multiple": 10.5679, "quiet": 2.7326, "quiet4h": 1.4167, "ret_bar": 0.019235, "prior_24h": 0.000713, "oi": 157526425.0, "oi_age_min": 0.0, "oi_pct_15m": 0.009937, "oi_pct_1h": 0.015542, "oi_z7": 2.445, "ret_15m": -0.010252, "ret_30m": -0.026328, "ret_60m": -0.022134, "ret_4h": -0.007922, "ret_1d": 0.043569, "px_15m": 0.04248, "px_30m": 0.04179, "px_60m": 0.04197, "px_4h": 0.04258, "note": ""}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-30 03:00", "bar_open": "2026-09-30 02:45", "open": 0.08626, "high": 0.08815, "low": 0.08595, "close": 0.08807, "quote_volume": 38122.0401, "baseline": 1777.6932, "multiple": 21.4447, "quiet": 0.4296, "quiet4h": 0.946, "ret_bar": 0.020983, "prior_24h": 0.009716, "oi": 17676166.2, "oi_age_min": 0.0, "oi_pct_15m": 0.001901, "oi_pct_1h": 0.002073, "oi_z7": 1.027, "ret_15m": -0.007948, "ret_30m": -0.008402, "ret_60m": -0.016918, "ret_4h": -0.014307, "ret_1d": 0.062791, "px_15m": 0.08737, "px_30m": 0.08733, "px_60m": 0.08658, "px_4h": 0.08681, "note": "參考日 · 窗內第一筆（錨點 09-30 15:30，領先約 750 分）"}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-10-02 00:00", "bar_open": "2026-10-01 23:45", "open": 0.04281, "high": 0.0441, "low": 0.04276, "close": 0.04405, "quote_volume": 119506.2954, "baseline": 11108.5916, "multiple": 10.758, "quiet": 2.4144, "quiet4h": 1.5019, "ret_bar": 0.029928, "prior_24h": -0.02016, "oi": 171222622.0, "oi_age_min": 0.0, "oi_pct_15m": 0.038073, "oi_pct_1h": 0.040513, "oi_z7": 11.537, "ret_15m": -0.007946, "ret_30m": -0.007264, "ret_60m": -0.017253, "ret_4h": 0.005675, "ret_1d": 0.40454, "px_15m": 0.0437, "px_30m": 0.04373, "px_60m": 0.04329, "px_4h": 0.0443, "note": "參考日 · 窗內第一筆（錨點 10-02 12:59，領先約 779 分）"}]};
+const DATA = {"generated": "2026-10-03 14:10", "eval": "只列發送時間 2026-09-01 00:00 ～ 2026-09-30 23:59（台北，2026年9月）。高低點路徑算到各幣最新資料（約 2026-10-03 13:45）", "counts": {"SAGA": 3, "GTC": 1, "SAND": 2, "QNT": 1, "MANA": 2}, "total": 9, "per_day": 0.06, "median_ret_1d": 0.043569, "pct_up_1d": 0.8889, "median_ret_15m": 0.00204, "median_ret_30m": -0.00357, "median_ret_60m": -0.003825, "median_ret_4h": 0.018613, "median_mfe": 1.089247, "median_mae": -0.024412, "path_end": "2026-10-03 13:45", "stake_usd": 100, "coins": ["SAGA", "GTC", "SAND", "QNT", "MANA"], "n_fwd_1d": 9, "refs": {"saga": {"name": "SAGA 9/15", "hit": true, "n": 1, "first": "2026-09-15 15:30", "window": "2026-09-15 00:00–2026-09-16 06:00"}, "gtc": {"name": "GTC 9/30", "hit": true, "n": 1, "first": "2026-09-30 03:00", "window": "2026-09-30 00:00–2026-09-30 21:00"}, "sand": {"name": "SAND 10/2", "hit": false, "n": 0, "first": null, "window": "2026-10-02 00:00–2026-10-02 18:00"}, "qnt": {"name": "QNT 9/23–24", "hit": false, "n": 0, "first": null, "window": "2026-09-23 12:00–2026-09-25 00:00"}}, "events": [{"coin": "MANA", "symbol": "MANAUSDT", "send_time": "2026-09-13 14:30", "bar_open": "2026-09-13 14:15", "open": 0.0776, "high": 0.0788, "low": 0.0775, "close": 0.0787, "quote_volume": 49517.1524, "baseline": 4825.2071, "multiple": 10.2622, "quiet": 0.9431, "quiet4h": 1.4327, "ret_bar": 0.015484, "prior_24h": 0.058743, "oi": 39545913.0, "oi_age_min": 0.0, "oi_pct_15m": 0.005757, "oi_pct_1h": 0.011378, "oi_z7": 2.546, "ret_15m": -0.002541, "ret_30m": -0.005083, "ret_60m": -0.005083, "ret_4h": -0.017789, "ret_1d": -0.025413, "mfe": 0.476493, "mae": -0.110546, "path_end": "2026-10-03 13:45", "px_15m": 0.0785, "px_30m": 0.0783, "px_60m": 0.0783, "px_4h": 0.0773, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-15 15:30", "bar_open": "2026-09-15 15:15", "open": 0.01844, "high": 0.01957, "low": 0.0183, "close": 0.01924, "quote_volume": 451461.5033, "baseline": 18604.4306, "multiple": 24.2663, "quiet": 2.4825, "quiet4h": 1.4546, "ret_bar": 0.043384, "prior_24h": 0.048919, "oi": 360847873.4, "oi_age_min": 0.0, "oi_pct_15m": 0.037592, "oi_pct_1h": 0.043026, "oi_z7": 4.817, "ret_15m": 0.010915, "ret_30m": -0.016112, "ret_60m": -0.040021, "ret_4h": 0.059252, "ret_1d": 0.04158, "mfe": 3.720894, "mae": -0.04262, "path_end": "2026-10-03 07:45", "px_15m": 0.01945, "px_30m": 0.01893, "px_60m": 0.01847, "px_4h": 0.02038, "note": "參考日主升 · 窗內第一筆（錨點 09-15 17:37，領先約 127 分）"}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-19 01:00", "bar_open": "2026-09-19 00:45", "open": 0.02066, "high": 0.02245, "low": 0.02058, "close": 0.02143, "quote_volume": 432688.1233, "baseline": 22698.3028, "multiple": 19.0626, "quiet": 2.2931, "quiet4h": 2.7797, "ret_bar": 0.036267, "prior_24h": -0.006724, "oi": 446087935.9, "oi_age_min": 0.0, "oi_pct_15m": 0.084677, "oi_pct_1h": 0.090218, "oi_z7": 16.668, "ret_15m": 0.355576, "ret_30m": 0.227718, "ret_60m": 0.199253, "ret_4h": 0.184321, "ret_1d": 0.181988, "mfe": 3.238451, "mae": 0.0, "path_end": "2026-10-03 07:45", "px_15m": 0.02905, "px_30m": 0.02631, "px_60m": 0.0257, "px_4h": 0.02538, "note": ""}, {"coin": "MANA", "symbol": "MANAUSDT", "send_time": "2026-09-19 08:15", "bar_open": "2026-09-19 08:00", "open": 0.0789, "high": 0.0821, "low": 0.0789, "close": 0.0796, "quote_volume": 216067.4994, "baseline": 4538.3118, "multiple": 47.6097, "quiet": 0.5136, "quiet4h": 0.5985, "ret_bar": 0.010152, "prior_24h": 0.0563, "oi": 43805592.0, "oi_age_min": 0.0, "oi_pct_15m": 0.0588, "oi_pct_1h": 0.071234, "oi_z7": 23.417, "ret_15m": 0.005025, "ret_30m": 0.0, "ret_60m": 0.001256, "ret_4h": 0.016332, "ret_1d": 0.041457, "mfe": 0.459799, "mae": -0.007538, "path_end": "2026-10-03 13:45", "px_15m": 0.08, "px_30m": 0.0796, "px_60m": 0.0797, "px_4h": 0.0809, "note": ""}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-19 08:15", "bar_open": "2026-09-19 08:00", "open": 0.03863, "high": 0.04123, "low": 0.03859, "close": 0.03922, "quote_volume": 321612.7535, "baseline": 9969.1282, "multiple": 32.2609, "quiet": 0.9588, "quiet4h": 1.0766, "ret_bar": 0.01501, "prior_24h": 0.049715, "oi": 151561256.0, "oi_age_min": 0.0, "oi_pct_15m": 0.005032, "oi_pct_1h": 0.018107, "oi_z7": 1.81, "ret_15m": 0.00204, "ret_30m": -0.00357, "ret_60m": -0.003825, "ret_4h": 0.018613, "ret_1d": 0.029067, "mfe": 0.874044, "mae": -0.019378, "path_end": "2026-10-03 09:00", "px_15m": 0.0393, "px_30m": 0.03908, "px_60m": 0.03907, "px_4h": 0.03995, "note": ""}, {"coin": "QNT", "symbol": "QNTUSDT", "send_time": "2026-09-22 18:15", "bar_open": "2026-09-22 18:00", "open": 67.57, "high": 68.45, "low": 67.51, "close": 68.45, "quote_volume": 69453.6022, "baseline": 6471.2012, "multiple": 10.7327, "quiet": 2.3893, "quiet4h": 2.6271, "ret_bar": 0.012424, "prior_24h": 0.019451, "oi": 55961.9, "oi_age_min": 0.0, "oi_pct_15m": 0.025586, "oi_pct_1h": 0.025903, "oi_z7": 6.032, "ret_15m": 0.002337, "ret_30m": 0.003214, "ret_60m": 0.013879, "ret_4h": 0.059167, "ret_1d": 0.096275, "mfe": 4.449233, "mae": -0.00599, "path_end": "2026-10-03 09:45", "px_15m": 68.61, "px_30m": 68.67, "px_60m": 69.4, "px_4h": 72.5, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-23 12:45", "bar_open": "2026-09-23 12:30", "open": 0.04043, "high": 0.04321, "low": 0.04043, "close": 0.04314, "quote_volume": 334878.0502, "baseline": 29767.5102, "multiple": 11.2498, "quiet": 1.0629, "quiet4h": 0.8942, "ret_bar": 0.067029, "prior_24h": 0.011509, "oi": 496593527.5, "oi_age_min": 0.0, "oi_pct_15m": 0.007473, "oi_pct_1h": 0.00688, "oi_z7": 1.27, "ret_15m": -0.000464, "ret_30m": 0.018776, "ret_60m": 0.032916, "ret_4h": 0.025962, "ret_1d": 0.051924, "mfe": 1.105471, "mae": -0.475429, "path_end": "2026-10-03 07:45", "px_15m": 0.04312, "px_30m": 0.04395, "px_60m": 0.04456, "px_4h": 0.04426, "note": ""}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-24 22:30", "bar_open": "2026-09-24 22:15", "open": 0.04213, "high": 0.04299, "low": 0.04213, "close": 0.04292, "quote_volume": 109003.4068, "baseline": 10314.5424, "multiple": 10.5679, "quiet": 2.7326, "quiet4h": 1.4167, "ret_bar": 0.019235, "prior_24h": 0.000713, "oi": 157526425.0, "oi_age_min": 0.0, "oi_pct_15m": 0.009937, "oi_pct_1h": 0.015542, "oi_z7": 2.445, "ret_15m": -0.010252, "ret_30m": -0.026328, "ret_60m": -0.022134, "ret_4h": -0.007922, "ret_1d": 0.043569, "mfe": 0.712488, "mae": -0.034483, "path_end": "2026-10-03 09:00", "px_15m": 0.04248, "px_30m": 0.04179, "px_60m": 0.04197, "px_4h": 0.04258, "note": ""}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-30 03:00", "bar_open": "2026-09-30 02:45", "open": 0.08626, "high": 0.08815, "low": 0.08595, "close": 0.08807, "quote_volume": 38122.0401, "baseline": 1777.6932, "multiple": 21.4447, "quiet": 0.4296, "quiet4h": 0.946, "ret_bar": 0.020983, "prior_24h": 0.009716, "oi": 17676166.2, "oi_age_min": 0.0, "oi_pct_15m": 0.001901, "oi_pct_1h": 0.002073, "oi_z7": 1.027, "ret_15m": -0.007948, "ret_30m": -0.008402, "ret_60m": -0.016918, "ret_4h": -0.014307, "ret_1d": 0.062791, "mfe": 1.089247, "mae": -0.024412, "path_end": "2026-10-03 08:15", "px_15m": 0.08737, "px_30m": 0.08733, "px_60m": 0.08658, "px_4h": 0.08681, "note": "參考日 · 窗內第一筆（錨點 09-30 15:30，領先約 750 分）"}]};
 const STAKE = 100;
 const fmtPct = (x) => x==null ? "—" : (x>=0?"+":"") + (x*100).toFixed(2) + "%";
 const cls = (x) => x==null ? "" : (x>=0 ? "up" : "dn");
@@ -146,6 +148,13 @@ const HORIZONS = [
   {label:"+1 小時", px:"px_60m", ret:"ret_60m"},
   {label:"+4 小時", px:"px_4h", ret:"ret_4h"},
 ];
+function extremeCell(e, key) {
+  const r = e[key];
+  if (r==null) return `<td class="money">—</td>`;
+  const pnl = STAKE * r;
+  const end = e.path_end ? `路徑到 ${e.path_end}` : "";
+  return `<td class="money ${cls(r)}" title="${end}">${fmtPct(r)}<span class="sub">${fmtUsd(pnl)}</span></td>`;
+}
 function px(v) {
   if (v==null) return "—";
   if (v >= 100) return v.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
@@ -180,6 +189,8 @@ function rowHtml(e, i) {
     ${moneyCell(e,"px_30m","ret_30m")}
     ${moneyCell(e,"px_60m","ret_60m")}
     ${moneyCell(e,"px_4h","ret_4h")}
+    ${extremeCell(e,"mfe")}
+    ${extremeCell(e,"mae")}
     <td class="note">${e.note||""}</td>
   </tr>`;
 }
@@ -189,6 +200,7 @@ const head = `<thead><tr>
   <th>OI張數</th><th>OI 15m</th><th>OI 1h</th><th>z</th>
   <th>+1d</th>
   <th>+15m／$100</th><th>+30m</th><th>+1h</th><th>+4h</th>
+  <th>最高漲幅</th><th>最大跌幅</th>
   <th class="l">備註</th>
 </tr></thead>`;
 function miniRow(e) {
@@ -210,6 +222,8 @@ function miniRow(e) {
     ${moneyCell(e,"px_30m","ret_30m")}
     ${moneyCell(e,"px_60m","ret_60m")}
     ${moneyCell(e,"px_4h","ret_4h")}
+    ${extremeCell(e,"mfe")}
+    ${extremeCell(e,"mae")}
     <td class="note">${e.note||""}</td>
   </tr>`;
 }
@@ -231,6 +245,8 @@ document.getElementById("kpis").innerHTML = [
   kpi("+30m 中位", fmtPct(median(D.events.map(e=>retAt(e,"px_30m","ret_30m")))), "單筆 "+fmtUsd(median(D.events.map(e=>{const r=retAt(e,"px_30m","ret_30m"); return r==null?null:STAKE*r;})))),
   kpi("+4h 合計損益", fmtUsd(pnlStats(HORIZONS[3]).total), D.total+" 筆各 $100 · 中位 "+fmtPct(pnlStats(HORIZONS[3]).med)),
   kpi("+1d 中位", fmtPct(D.median_ret_1d), D.pct_up_1d==null?"":("上漲 "+(D.pct_up_1d*100).toFixed(0)+"% · n="+D.n_fwd_1d)),
+  kpi("到最新最高", fmtPct(D.median_mfe), "中位漲幅 · $100×漲幅"),
+  kpi("到最新最低", fmtPct(D.median_mae), "中位跌幅（最差）"),
 ].join("");
 document.querySelector("#pnlsum tbody").innerHTML = HORIZONS.map(h => {
   const s = pnlStats(h);
@@ -290,6 +306,8 @@ if (first) {
 document.getElementById("foot").textContent =
   "產生 " + D.generated + " 台北 · 評估窗 " + D.eval +
   " · 每筆以警報 15m 收盤買入 $100，損益用之後 15m 收盤（+30 分＝兩根後）。未扣手續費。" +
+  " · 最高漲幅／最大跌幅從警報收盤之後算到各幣最新 15m（約 " + (D.path_end||"") + "），用最高價與最低價，不是固定出場。" +
+  " · 只含 2026 年 9 月（台北）發出的模擬警報。" +
   " · OI 為 data.binance.vision 日檔合約張數，收盤 as-of、最久 30 分；z 與 1h 變化對齊正式 worker。";
 </script>
 </body>
