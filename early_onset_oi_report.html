@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>初期放量 × 合約持倉確認</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, "Noto Sans TC", sans-serif; max-width: 72rem; margin: 2rem auto; padding: 0 1.1rem 3rem; line-height: 1.55; }
+  h1 { font-size: 1.45rem; margin-bottom: .2rem; }
+  h2 { font-size: 1.12rem; margin-top: 1.8rem; }
+  p.lead, .note { color: #555; }
+  @media (prefers-color-scheme: dark) { p.lead, .note { color: #aaa; } }
+  table { border-collapse: collapse; width: 100%; font-size: .86rem; margin: .6rem 0 1rem; }
+  th, td { border-bottom: 1px solid #ddd; padding: .35rem .45rem; text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
+  @media (prefers-color-scheme: dark) { th, td { border-color: #333; } }
+  tr.rec { background: #e7f6ec; font-weight: 650; }
+  tr.keep { background: #f3faf5; }
+  tr.drop { opacity: .72; }
+  tr.ref td:nth-child(2) { font-weight: 700; }
+  @media (prefers-color-scheme: dark) {
+    tr.rec { background: #143322; }
+    tr.keep { background: #102318; }
+  }
+  code { font-size: .9em; }
+  ul { padding-left: 1.2rem; }
+  .wrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+<h1>上漲初期訊號 × 合約持倉（OI）確認</h1>
+<p class="lead">現貨 15 分 K 的初期放量規則不變，再要求 USDT-M 合約持倉與量價同向。四幣 SAGA／GTC／SAND／QNT。評估窗約 2026-08-30～10-03（台北），OI 檔截至 2026-10-02 07:55。</p>
+
+<h2>建議加進哨兵的條件</h2>
+<p>在現有初期規則之上，<strong>同時</strong>滿足：</p>
+<ul>
+  <li>用<strong>合約張數</strong> <code>sum_open_interest</code>，不用 USDT 名目持倉（價漲會把名目倉灌大）。</li>
+  <li>訊號 15 分 K 收盤時，<strong>近 1 小時持倉變化 &gt; 0</strong>（相對 4 根前）。</li>
+  <li>同一根的持倉變化率，對「前 7 日、不含當根」的 15 分持倉變化率，<strong>z ≥ 1</strong>。</li>
+</ul>
+<p>回測（AND 在已冷卻的 20 筆上，以及把條件放進掃描後重跑 60 分冷卻）結果相同：<strong>20 → 8 筆</strong>，密度 <strong>0.146 → 0.058 次／日／幣</strong>。隔日中位 <strong>+4.3% → +5.7%</strong>，這 8 筆隔日都是正的（樣本只有一個多月，不能當成穩定勝率）。三段參考日的第一筆都留著：SAGA 9/15 15:30、GTC 9/30 03:00、SAND 10/2 00:00。</p>
+<p class="note">不要用近 4 小時「價格與持倉的相關係數」當硬門檻：GTC 9/30 當下 15 分／1 小時持倉是增加的，但 4 小時相關是 −0.17，相關係數會把參考日砍掉。也不要改成 z≥1.5 或單根 ≥+0.5%：GTC 那筆單根持倉只 +0.19%、z=1.03，門檻再高就漏。</p>
+
+<h2>濾網對照（套在初期規則上）</h2>
+<p class="note">「參考日」只算初期規則原本打中的 SAGA／GTC／SAND。QNT 參考棒是放量陰線，本來就不在這 20 筆裡。AND 與全量重掃的筆數、隔日中位、參考日第一筆時間全部一致，下表只列一套。</p>
+<div class="wrap"><table>
+<thead><tr><th>條件</th><th>筆數</th><th>次/日/幣</th><th>隔日中位</th><th>隔日上漲</th><th>留下的參考</th><th>SAGA</th><th>GTC</th><th>SAND</th></tr></thead>
+<tbody>
+<tr class=''><td>初期規則（無 OI）</td><td>20</td><td>0.146</td><td>+4.26%</td><td>+85%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>合約倉 15m Δ>0</td><td>13</td><td>0.095</td><td>+4.36%</td><td>+92%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>合約倉 1h Δ>0</td><td>14</td><td>0.102</td><td>+4.72%</td><td>+93%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>合約倉 4h Δ>0</td><td>16</td><td>0.116</td><td>+4.26%</td><td>+88%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>15m 與 1h 都增加</td><td>10</td><td>0.073</td><td>+4.77%</td><td>+100%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>15m+1h+4h 都增加</td><td>10</td><td>0.073</td><td>+4.77%</td><td>+100%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>15m 倉變 z≥1</td><td>9</td><td>0.066</td><td>+5.19%</td><td>+100%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>15m 倉變 z≥1.5</td><td>7</td><td>0.051</td><td>+4.36%</td><td>+100%</td><td>SAGA,SAND</td><td>09-15 15:30</td><td></td><td>10-02 00:00</td></tr><tr class=''><td>15m 倉變 z≥2</td><td>6</td><td>0.044</td><td>+6.99%</td><td>+100%</td><td>SAGA,SAND</td><td>09-15 15:30</td><td></td><td>10-02 00:00</td></tr><tr class=''><td>近 4h 價倉相關 >0</td><td>11</td><td>0.080</td><td>+4.16%</td><td>+91%</td><td>SAGA,SAND</td><td>09-15 15:30</td><td></td><td>10-02 00:00</td></tr><tr class=''><td>15m 倉增 且 4h 相關>0</td><td>11</td><td>0.080</td><td>+4.16%</td><td>+91%</td><td>SAGA,SAND</td><td>09-15 15:30</td><td></td><td>10-02 00:00</td></tr><tr class='rec'><td>1h 倉增 且 z≥1（建議）</td><td>8</td><td>0.058</td><td>+5.74%</td><td>+100%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>名目倉（USDT）15m Δ>0</td><td>15</td><td>0.109</td><td>+4.41%</td><td>+80%</td><td>SAGA,GTC,SAND</td><td>09-15 15:30</td><td>09-30 03:00</td><td>10-02 00:00</td></tr><tr class=''><td>合約倉 15m ≥+0.5%</td><td>8</td><td>0.058</td><td>+4.77%</td><td>+100%</td><td>SAGA,SAND</td><td>09-15 15:30</td><td></td><td>10-02 00:00</td></tr><tr class=''><td>合約倉 15m ≥+1%</td><td>5</td><td>0.036</td><td>+9.63%</td><td>+100%</td><td>SAGA,SAND</td><td>09-15 15:30</td><td></td><td>10-02 00:00</td></tr>
+</tbody></table></div>
+
+<h2>20 筆初期警報的持倉</h2>
+<p class="note">「留」= 建議條件通過。參考列是各參考窗裡的第一筆。合約倉是張數（幣數量），不是 USDT。</p>
+<div class="wrap"><table>
+<thead><tr><th></th><th>幣</th><th>發送（台北）</th><th>幣價</th><th>量倍數</th><th>當根漲跌</th><th>合約倉</th><th>倉Δ15m</th><th>倉Δ1h</th><th>倉Δ4h</th><th>z(7日)</th><th>價倉相關4h</th><th>名目倉Δ15m</th><th>隔日</th><th></th></tr></thead>
+<tbody>
+<tr class='drop'><td>砍</td><td>SAND</td><td>2026-09-02 19:15</td><td>0.0376</td><td>12.6×</td><td>+1.48%</td><td>201,530,550</td><td>+0.07%</td><td>-0.84%</td><td>-0.69%</td><td>0.16</td><td>-0.02</td><td>+1.64%</td><td>+4.41%</td><td></td></tr><tr class='keep ref'><td>留</td><td>SAGA</td><td>2026-09-15 15:30</td><td>0.01924</td><td>24.3×</td><td>+4.34%</td><td>360,847,873</td><td>+3.76%</td><td>+4.30%</td><td>+4.78%</td><td>4.82</td><td>0.88</td><td>+4.88%</td><td>+4.16%</td><td>參考</td></tr><tr class='drop'><td>砍</td><td>GTC</td><td>2026-09-18 21:45</td><td>0.08054</td><td>13.4×</td><td>+1.60%</td><td>15,305,256</td><td>-0.14%</td><td>+0.23%</td><td>+0.53%</td><td>-0.93</td><td>-0.27</td><td>+1.23%</td><td>+5.08%</td><td></td></tr><tr class='keep'><td>留</td><td>SAGA</td><td>2026-09-19 01:00</td><td>0.02143</td><td>19.1×</td><td>+3.63%</td><td>446,087,936</td><td>+8.47%</td><td>+9.02%</td><td>+7.98%</td><td>16.67</td><td>0.81</td><td>+28.71%</td><td>+18.20%</td><td></td></tr><tr class='keep'><td>留</td><td>SAND</td><td>2026-09-19 08:15</td><td>0.03922</td><td>32.3×</td><td>+1.50%</td><td>151,561,256</td><td>+0.50%</td><td>+1.81%</td><td>+2.25%</td><td>1.81</td><td>0.26</td><td>-3.88%</td><td>+2.91%</td><td></td></tr><tr class='drop'><td>砍</td><td>GTC</td><td>2026-09-20 10:15</td><td>0.08675</td><td>10.9×</td><td>+1.05%</td><td>15,251,118</td><td>-0.47%</td><td>-0.66%</td><td>-1.00%</td><td>-2.47</td><td>-0.51</td><td>+1.17%</td><td>-3.27%</td><td></td></tr><tr class='drop'><td>砍</td><td>SAND</td><td>2026-09-20 11:30</td><td>0.04052</td><td>14.1×</td><td>+2.74%</td><td>138,905,785</td><td>+1.54%</td><td>-1.15%</td><td>-0.84%</td><td>4.78</td><td>0.78</td><td>+3.82%</td><td>+0.47%</td><td></td></tr><tr class='drop'><td>砍</td><td>GTC</td><td>2026-09-21 02:30</td><td>0.08508</td><td>16.3×</td><td>+1.38%</td><td>15,578,736</td><td>-0.43%</td><td>+0.96%</td><td>+0.77%</td><td>-2.19</td><td>-0.32</td><td>-0.89%</td><td>+2.19%</td><td></td></tr><tr class='drop'><td>砍</td><td>GTC</td><td>2026-09-21 13:00</td><td>0.0858</td><td>24.5×</td><td>+1.18%</td><td>15,618,462</td><td>-0.26%</td><td>-0.11%</td><td>+0.58%</td><td>-1.43</td><td>-0.32</td><td>-0.13%</td><td>+1.45%</td><td></td></tr><tr class='drop'><td>砍</td><td>QNT</td><td>2026-09-22 13:15</td><td>67.52</td><td>27.1×</td><td>+1.03%</td><td>55,460</td><td>-0.98%</td><td>-1.10%</td><td>-2.78%</td><td>-2.40</td><td>-0.72</td><td>-0.78%</td><td>+11.69%</td><td></td></tr><tr class='keep'><td>留</td><td>QNT</td><td>2026-09-22 18:15</td><td>68.45</td><td>10.7×</td><td>+1.24%</td><td>55,962</td><td>+2.56%</td><td>+2.59%</td><td>+2.23%</td><td>6.03</td><td>0.34</td><td>+4.14%</td><td>+9.63%</td><td></td></tr><tr class='drop'><td>砍</td><td>SAGA</td><td>2026-09-23 00:30</td><td>0.03922</td><td>31.2×</td><td>+4.78%</td><td>489,373,755</td><td>-0.06%</td><td>+2.10%</td><td>+1.90%</td><td>-0.12</td><td>-0.11</td><td>+7.00%</td><td>+27.23%</td><td></td></tr><tr class='drop'><td>砍</td><td>SAND</td><td>2026-09-23 04:30</td><td>0.04296</td><td>19.1×</td><td>+1.01%</td><td>163,217,155</td><td>+0.27%</td><td>-0.21%</td><td>+0.22%</td><td>0.74</td><td>0.42</td><td>+1.51%</td><td>-6.77%</td><td></td></tr><tr class='keep'><td>留</td><td>SAGA</td><td>2026-09-23 12:45</td><td>0.04314</td><td>11.2×</td><td>+6.70%</td><td>496,593,528</td><td>+0.75%</td><td>+0.69%</td><td>+0.46%</td><td>1.27</td><td>0.94</td><td>+5.57%</td><td>+5.19%</td><td></td></tr><tr class='keep'><td>留</td><td>SAND</td><td>2026-09-24 22:30</td><td>0.04292</td><td>10.6×</td><td>+1.92%</td><td>157,526,425</td><td>+0.99%</td><td>+1.55%</td><td>+2.82%</td><td>2.44</td><td>0.66</td><td>+1.92%</td><td>+4.36%</td><td></td></tr><tr class='drop'><td>砍</td><td>SAGA</td><td>2026-09-25 05:30</td><td>0.05793</td><td>96.7×</td><td>+38.36%</td><td>499,677,759</td><td>-1.33%</td><td>+0.32%</td><td>+0.40%</td><td>-2.42</td><td>-0.73</td><td>+15.12%</td><td>-36.72%</td><td></td></tr><tr class='drop'><td>砍</td><td>GTC</td><td>2026-09-25 20:15</td><td>0.0897</td><td>10.1×</td><td>+1.16%</td><td>17,081,461</td><td>+0.05%</td><td>+0.24%</td><td>+1.73%</td><td>0.14</td><td>0.26</td><td>-0.28%</td><td>+2.75%</td><td></td></tr><tr class='drop'><td>砍</td><td>GTC</td><td>2026-09-29 14:15</td><td>0.08607</td><td>18.1×</td><td>+1.81%</td><td>17,457,325</td><td>+0.04%</td><td>+0.10%</td><td>+0.30%</td><td>0.14</td><td>0.06</td><td>+1.81%</td><td>+4.04%</td><td></td></tr><tr class='keep ref'><td>留</td><td>GTC</td><td>2026-09-30 03:00</td><td>0.08807</td><td>21.4×</td><td>+2.10%</td><td>17,676,166</td><td>+0.19%</td><td>+0.21%</td><td>+1.20%</td><td>1.03</td><td>-0.17</td><td>+2.01%</td><td>+6.28%</td><td>參考</td></tr><tr class='keep ref'><td>留</td><td>SAND</td><td>2026-10-02 00:00</td><td>0.04405</td><td>10.8×</td><td>+2.99%</td><td>171,222,622</td><td>+3.81%</td><td>+4.05%</td><td>+3.50%</td><td>11.54</td><td>0.85</td><td>+6.92%</td><td>+40.45%</td><td>參考</td></tr>
+</tbody></table></div>
+
+<h2>讀這張表</h2>
+<ul>
+  <li>SAGA 9/25 05:30 當根 +38%、隔日 −37%，合約倉反而 −1.3%（z=−2.4）。價漲倉減，建議條件會砍。這是 OI 最有用的地方。</li>
+  <li>SAGA 9/23 00:30 隔日 +27% 也被砍：合約倉幾乎沒增（−0.06%），名目倉 +7% 只是價格計價。若改看名目倉會留下它，但也會留下一堆「價漲、倉沒加」的假訊號。</li>
+  <li>被砍的 12 筆隔日中位約 +2.5%、上漲比例 75%；留下的 8 筆中位 +5.7%、8/8 為正。</li>
+  <li>QNT 安靜放量參考棒 9/23 22:15（收 71.98、當根 −2.8%、隔日 +10%）合約倉 15 分 −1.3%、z=−2.7。不是「持倉跟著量價一起堆上去」，所以即使用 OI 也不該把它算進初期多頭訊號。9/22 18:15 那筆 QNT（價與倉都增）有通過。</li>
+</ul>
+
+<h2>資料從哪來、缺哪裡</h2>
+<ul>
+  <li><code>fapi.binance.com/futures/data/openInterestHist</code> 從此主機回 HTTP 451（地區限制）。<code>data-api.binance.vision</code> 沒有這條 futures 路徑（404）。</li>
+  <li>改用 <code>data.binance.vision</code> 的 U 本位日檔 metrics：<code>sum_open_interest</code>（合約張數）與 <code>sum_open_interest_value</code>（USDT 名目）。時間戳當 UTC，表上換算台北。</li>
+  <li>檔內不是固定 15 分，而是大約 5–20 分一筆的快照。對齊方式：每根 15 分 K 取「收盤當下或之前」的最後一筆；超過 30 分鐘沒更新就當缺值。這次回測裡，有資料的 bar 快照年齡中位數是 0（常剛好落在收盤）。</li>
+  <li>四幣在 2026-06-01 之前就有合約 metrics，評估窗內沒有「幣還沒上合約」的空洞。SAGA 約從 2024-04-09、GTC 2021-12-01、QNT 2022-10-20 起有檔。</li>
+  <li>下載當下 2026-10-02、10-03 的日檔還沒發布，持倉只到 <strong>2026-10-02 07:55 台北</strong>（10-01 UTC 檔的結尾）。現貨 K 線一直到約 10-03 上午。這 20 筆初期警報都落在有持倉的時段；評估窗約 97% 的 15 分 K 對得到持倉，缺口幾乎就是最後這段尚未發布的日檔。正式哨兵要用即時 OI，不能等日檔。</li>
+</ul>
+<p class="note">尚未寫進 Railway worker／Telegram。這頁只是回測。</p>
+</body></html>
