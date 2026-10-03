@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>上漲初期訊號 · 四幣模擬警報時間軸</title>
+<style>
+  :root {
+    --bg:#0f1419; --card:#1a222c; --line:#2c3844; --txt:#e7eef5; --muted:#93a4b5;
+    --up:#3dd68c; --dn:#ff6b6b; --accent:#7eb6ff; --warn:#f0c14a;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.55 "Segoe UI","Noto Sans TC","PingFang TC",sans-serif; background:var(--bg); color:var(--txt); }
+  main { max-width:1320px; margin:0 auto; padding:28px 16px 72px; }
+  h1 { font-size:26px; margin:0 0 6px; }
+  h2 { font-size:18px; margin:32px 0 10px; }
+  p.lead, .note { color:var(--muted); }
+  p.lead { margin:0 0 16px; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .grid5 { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-top:12px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .card h3 { margin:0 0 2px; font-size:16px; }
+  .big { font-size:28px; font-weight:700; }
+  .muted { color:var(--muted); font-size:13px; }
+  .up { color:var(--up); } .dn { color:var(--dn); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:right; padding:7px 8px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th:first-child, td:first-child, th.l, td.l, td.note { text-align:left; }
+  td.note { white-space:normal; min-width:200px; color:var(--warn); }
+  th { color:var(--muted); font-weight:600; position:sticky; top:0; background:#121920; z-index:1; }
+  tr.ref td { background:rgba(240,193,74,.08); }
+  .wrap { overflow:auto; border:1px solid var(--line); border-radius:12px; background:var(--card); max-height:72vh; }
+  .pill { display:inline-block; padding:1px 8px; border-radius:99px; background:#243140; color:var(--accent); font-size:12px; margin-left:6px; }
+  .filters { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 10px; }
+  button { background:#243140; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:6px 10px; cursor:pointer; font:inherit; }
+  button.on { background:#1d4e89; border-color:#3d7ec9; }
+  ul.rules { margin:8px 0 0; padding-left:1.2rem; }
+  ul.rules li { margin:0.25rem 0; }
+  .sample { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:13px; white-space:pre-wrap; margin:0; color:#d5e2ee; }
+  .miss { color:var(--dn); font-weight:600; }
+  .hit { color:var(--up); font-weight:600; }
+  @media (max-width:900px) { .grid, .grid5 { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>上漲初期訊號 · 四幣模擬警報</h1>
+  <p class="lead">正式主規則（尚未覆寫線上箱型突破）。現貨 SAGA／GTC／SAND／QNT，<b>15 分 K</b>。成交額＝該根內每分鐘 <code>close×volume</code> 加總。基準＝<b>前正好 8640 根已完成 15m</b>（90 天）成交額平均。模擬發送時刻＝該根 <b>15 分收盤</b>（台北 UTC+8）。這是回測模擬，不是當時真的有打 Telegram。</p>
+  <div class="card">
+    <h3>觸發（全部要同時成立）</h3>
+    <ul class="rules">
+      <li>當根成交額 ≥ 基準 <b>10×</b></li>
+      <li>前 4 根（1 小時）成交額中位數 ≤ 基準 <b>3×</b></li>
+      <li>前 16 根（4 小時）成交額中位數 ≤ 基準 <b>3×</b></li>
+      <li>收盤 ÷ 前一根收盤 − 1 ≥ <b>+1%</b>（這根已轉強）</li>
+      <li>前 24h 漲幅 ≤ <b>+8%</b>：前一根收盤 ÷ 再往前 96 根收盤 − 1（不含當根，避免把初期這根算成「已經漲完」）</li>
+      <li>同一幣冷卻 <b>60 分</b>（訊號根至少隔 4 根）</li>
+    </ul>
+  </div>
+  <div class="grid5" id="kpis"></div>
+  <h2>各幣筆數</h2>
+  <div class="grid" id="cards"></div>
+  <h2>參考行情</h2>
+  <div class="wrap" style="max-height:none"><table id="refs"><thead><tr>
+    <th class="l">窗</th><th class="l">是否打中</th><th>窗內筆數</th><th class="l">窗內第一筆（台北）</th>
+  </tr></thead><tbody></tbody></table></div>
+  <p class="note">黃底列在四段參考窗內。報酬是警報收盤價到之後 15 分／60 分／4 小時／1 日收盤的漲跌；資料還沒走完顯示「—」。QNT 9/23 那筆是放量陰線，這條「收漲 ≥1%」會刻意放掉。</p>
+  <div class="card" style="margin-top:16px">
+    <div class="muted">模擬訊息（時間序第一筆）</div>
+    <pre class="sample" id="sample"></pre>
+  </div>
+  <h2>依幣分開</h2>
+  <div id="bycoin"></div>
+  <h2>全部時間序 <span class="pill" id="count"></span></h2>
+  <div class="filters" id="filters"></div>
+  <div class="wrap">
+    <table id="feed">
+      <thead><tr>
+        <th class="l">#</th>
+        <th class="l">幣</th>
+        <th class="l">發送時間（台北）</th>
+        <th>收盤價</th>
+        <th>開</th><th>高</th><th>低</th>
+        <th>當根漲幅</th>
+        <th>前24h</th>
+        <th>成交額倍率</th>
+        <th>前1h安靜</th>
+        <th>前4h安靜</th>
+        <th>+15m</th><th>+60m</th><th>+4h</th><th>+1d</th>
+        <th class="l">備註</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="note" id="foot"></p>
+</main>
+<script>
+const DATA = {"generated": "2026-10-03 12:25", "eval": "2026-08-30 00:15 收盤起 ～ 2026-10-03 09:45（各幣尾端略有不同）", "counts": {"SAGA": 5, "GTC": 7, "SAND": 6, "QNT": 2}, "total": 20, "per_day": 0.145587, "median_ret_1d": 0.042575, "pct_up_1d": 0.85, "median_ret_15m": -0.000177, "median_ret_60m": -0.004274, "median_ret_4h": 0.011125, "n_fwd_1d": 20, "refs": {"saga": {"name": "SAGA 9/15", "hit": true, "n": 1, "first": "2026-09-15 15:30", "window": "2026-09-15 00:00–2026-09-16 06:00"}, "gtc": {"name": "GTC 9/30", "hit": true, "n": 1, "first": "2026-09-30 03:00", "window": "2026-09-30 00:00–2026-09-30 21:00"}, "sand": {"name": "SAND 10/2", "hit": true, "n": 1, "first": "2026-10-02 00:00", "window": "2026-10-02 00:00–2026-10-02 18:00"}, "qnt": {"name": "QNT 9/23–24", "hit": false, "n": 0, "first": null, "window": "2026-09-23 12:00–2026-09-25 00:00"}}, "events": [{"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-02 19:15", "bar_open": "2026-09-02 19:00", "open": 0.03701, "high": 0.03763, "low": 0.0369, "close": 0.0376, "quote_volume": 130551.8456, "baseline": 10360.9508, "multiple": 12.6004, "quiet": 1.3967, "quiet4h": 1.1839, "ret_bar": 0.014845, "prior_24h": -0.013053, "ret_15m": 0.001596, "ret_60m": 0.017287, "ret_4h": 0.011436, "ret_1d": 0.044149, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-15 15:30", "bar_open": "2026-09-15 15:15", "open": 0.01844, "high": 0.01957, "low": 0.0183, "close": 0.01924, "quote_volume": 451461.5033, "baseline": 18604.4306, "multiple": 24.2663, "quiet": 2.4825, "quiet4h": 1.4546, "ret_bar": 0.043384, "prior_24h": 0.048919, "ret_15m": 0.010915, "ret_60m": -0.040021, "ret_4h": 0.059252, "ret_1d": 0.04158, "note": "參考日主升 · 窗內第一筆（錨點 09-15 17:37，領先約 127 分）"}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-18 21:45", "bar_open": "2026-09-18 21:30", "open": 0.07927, "high": 0.08069, "low": 0.07927, "close": 0.08054, "quote_volume": 22974.0423, "baseline": 1713.2411, "multiple": 13.4097, "quiet": 1.6049, "quiet4h": 1.0904, "ret_bar": 0.016021, "prior_24h": 0.039061, "ret_15m": -0.006953, "ret_60m": -0.000993, "ret_4h": 0.015893, "ret_1d": 0.050782, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-19 01:00", "bar_open": "2026-09-19 00:45", "open": 0.02066, "high": 0.02245, "low": 0.02058, "close": 0.02143, "quote_volume": 432688.1233, "baseline": 22698.3028, "multiple": 19.0626, "quiet": 2.2931, "quiet4h": 2.7797, "ret_bar": 0.036267, "prior_24h": -0.006724, "ret_15m": 0.355576, "ret_60m": 0.199253, "ret_4h": 0.184321, "ret_1d": 0.181988, "note": ""}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-19 08:15", "bar_open": "2026-09-19 08:00", "open": 0.03863, "high": 0.04123, "low": 0.03859, "close": 0.03922, "quote_volume": 321612.7535, "baseline": 9969.1282, "multiple": 32.2609, "quiet": 0.9588, "quiet4h": 1.0766, "ret_bar": 0.01501, "prior_24h": 0.049715, "ret_15m": 0.00204, "ret_60m": -0.003825, "ret_4h": 0.018613, "ret_1d": 0.029067, "note": ""}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-20 10:15", "bar_open": "2026-09-20 10:00", "open": 0.08585, "high": 0.08727, "low": 0.08585, "close": 0.08675, "quote_volume": 18990.8036, "baseline": 1742.8725, "multiple": 10.8963, "quiet": 0.748, "quiet4h": 0.821, "ret_bar": 0.010483, "prior_24h": 0.051568, "ret_15m": 0.005648, "ret_60m": -0.023401, "ret_4h": -0.028127, "ret_1d": -0.032738, "note": ""}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-20 11:30", "bar_open": "2026-09-20 11:15", "open": 0.03946, "high": 0.0409, "low": 0.03932, "close": 0.04052, "quote_volume": 137056.3597, "baseline": 9707.9202, "multiple": 14.118, "quiet": 1.8095, "quiet4h": 1.2477, "ret_bar": 0.027383, "prior_24h": -0.011529, "ret_15m": 0.010612, "ret_60m": -0.008638, "ret_4h": -0.023692, "ret_1d": 0.004689, "note": ""}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-21 02:30", "bar_open": "2026-09-21 02:15", "open": 0.08392, "high": 0.08553, "low": 0.08392, "close": 0.08508, "quote_volume": 28482.3273, "baseline": 1750.3469, "multiple": 16.2724, "quiet": 0.4638, "quiet4h": 0.106, "ret_bar": 0.013823, "prior_24h": -0.013402, "ret_15m": -0.008698, "ret_60m": -0.01575, "ret_4h": -0.009285, "ret_1d": 0.021862, "note": ""}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-21 13:00", "bar_open": "2026-09-21 12:45", "open": 0.0848, "high": 0.08814, "low": 0.08475, "close": 0.0858, "quote_volume": 42856.074, "baseline": 1750.674, "multiple": 24.4798, "quiet": 1.1444, "quiet4h": 0.14, "ret_bar": 0.011792, "prior_24h": -0.00106, "ret_15m": -0.01317, "ret_60m": -0.006177, "ret_4h": 0.014569, "ret_1d": 0.014452, "note": ""}, {"coin": "QNT", "symbol": "QNTUSDT", "send_time": "2026-09-22 13:15", "bar_open": "2026-09-22 13:00", "open": 66.84, "high": 67.68, "low": 66.75, "close": 67.52, "quote_volume": 173976.5988, "baseline": 6424.6699, "multiple": 27.0795, "quiet": 1.5511, "quiet4h": 1.5511, "ret_bar": 0.010325, "prior_24h": 0.019683, "ret_15m": -0.009923, "ret_60m": -0.000741, "ret_4h": -0.003999, "ret_1d": 0.116854, "note": ""}, {"coin": "QNT", "symbol": "QNTUSDT", "send_time": "2026-09-22 18:15", "bar_open": "2026-09-22 18:00", "open": 67.57, "high": 68.45, "low": 67.51, "close": 68.45, "quote_volume": 69453.6022, "baseline": 6471.2012, "multiple": 10.7327, "quiet": 2.3893, "quiet4h": 2.6271, "ret_bar": 0.012424, "prior_24h": 0.019451, "ret_15m": 0.002337, "ret_60m": 0.013879, "ret_4h": 0.059167, "ret_1d": 0.096275, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-23 00:30", "bar_open": "2026-09-23 00:15", "open": 0.03743, "high": 0.04104, "low": 0.03605, "close": 0.03922, "quote_volume": 919604.2381, "baseline": 29491.7113, "multiple": 31.1818, "quiet": 1.5969, "quiet4h": 1.9626, "ret_bar": 0.047823, "prior_24h": 0.026323, "ret_15m": -0.010199, "ret_60m": -0.023712, "ret_4h": -0.035951, "ret_1d": 0.27231, "note": ""}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-23 04:30", "bar_open": "2026-09-23 04:15", "open": 0.04254, "high": 0.044, "low": 0.04254, "close": 0.04296, "quote_volume": 188547.1969, "baseline": 9874.3579, "multiple": 19.0946, "quiet": 2.3776, "quiet4h": 2.5486, "ret_bar": 0.010111, "prior_24h": 0.024079, "ret_15m": -0.001164, "ret_60m": -0.004423, "ret_4h": 0.013501, "ret_1d": -0.067737, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-23 12:45", "bar_open": "2026-09-23 12:30", "open": 0.04043, "high": 0.04321, "low": 0.04043, "close": 0.04314, "quote_volume": 334878.0502, "baseline": 29767.5102, "multiple": 11.2498, "quiet": 1.0629, "quiet4h": 0.8942, "ret_bar": 0.067029, "prior_24h": 0.011509, "ret_15m": -0.000464, "ret_60m": 0.032916, "ret_4h": 0.025962, "ret_1d": 0.051924, "note": ""}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-09-24 22:30", "bar_open": "2026-09-24 22:15", "open": 0.04213, "high": 0.04299, "low": 0.04213, "close": 0.04292, "quote_volume": 109003.4068, "baseline": 10314.5424, "multiple": 10.5679, "quiet": 2.7326, "quiet4h": 1.4167, "ret_bar": 0.019235, "prior_24h": 0.000713, "ret_15m": -0.010252, "ret_60m": -0.022134, "ret_4h": -0.007922, "ret_1d": 0.043569, "note": ""}, {"coin": "SAGA", "symbol": "SAGAUSDT", "send_time": "2026-09-25 05:30", "bar_open": "2026-09-25 05:15", "open": 0.04188, "high": 0.058, "low": 0.04056, "close": 0.05793, "quote_volume": 3205456.4052, "baseline": 33162.793, "multiple": 96.6582, "quiet": 2.4875, "quiet4h": 1.4973, "ret_bar": 0.383568, "prior_24h": -0.157715, "ret_15m": 0.046953, "ret_60m": 0.192819, "ret_4h": 0.165372, "ret_1d": -0.367167, "note": ""}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-25 20:15", "bar_open": "2026-09-25 20:00", "open": 0.08861, "high": 0.09014, "low": 0.08861, "close": 0.0897, "quote_volume": 17438.8304, "baseline": 1732.0366, "multiple": 10.0684, "quiet": 2.5313, "quiet4h": 1.2378, "ret_bar": 0.011616, "prior_24h": 0.061408, "ret_15m": 0.000111, "ret_60m": -0.004125, "ret_4h": 0.010814, "ret_1d": 0.027536, "note": ""}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-29 14:15", "bar_open": "2026-09-29 14:00", "open": 0.08454, "high": 0.08614, "low": 0.08454, "close": 0.08607, "quote_volume": 32148.2268, "baseline": 1780.9402, "multiple": 18.0513, "quiet": 0.3775, "quiet4h": 0.5589, "ret_bar": 0.018098, "prior_24h": -0.03006, "ret_15m": 0.007087, "ret_60m": 0.002556, "ret_4h": 0.009179, "ret_1d": 0.040432, "note": ""}, {"coin": "GTC", "symbol": "GTCUSDT", "send_time": "2026-09-30 03:00", "bar_open": "2026-09-30 02:45", "open": 0.08626, "high": 0.08815, "low": 0.08595, "close": 0.08807, "quote_volume": 38122.0401, "baseline": 1777.6932, "multiple": 21.4447, "quiet": 0.4296, "quiet4h": 0.946, "ret_bar": 0.020983, "prior_24h": 0.009716, "ret_15m": -0.007948, "ret_60m": -0.016918, "ret_4h": -0.014307, "ret_1d": 0.062791, "note": "參考日 · 窗內第一筆（錨點 09-30 15:30，領先約 750 分）"}, {"coin": "SAND", "symbol": "SANDUSDT", "send_time": "2026-10-02 00:00", "bar_open": "2026-10-01 23:45", "open": 0.04281, "high": 0.0441, "low": 0.04276, "close": 0.04405, "quote_volume": 119506.2954, "baseline": 11108.5916, "multiple": 10.758, "quiet": 2.4144, "quiet4h": 1.5019, "ret_bar": 0.029928, "prior_24h": -0.02016, "ret_15m": -0.007946, "ret_60m": -0.017253, "ret_4h": 0.005675, "ret_1d": 0.40454, "note": "參考日 · 窗內第一筆（錨點 10-02 12:59，領先約 779 分）"}]};
+const fmtPct = (x) => x==null ? "—" : (x>=0?"+":"") + (x*100).toFixed(2) + "%";
+const cls = (x) => x==null ? "" : (x>=0 ? "up" : "dn");
+function px(v) {
+  if (v==null) return "—";
+  if (v >= 100) return v.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+  if (v >= 1) return v.toFixed(2);
+  if (v >= 0.1) return v.toFixed(4);
+  return v.toFixed(5);
+}
+function rowHtml(e, i) {
+  const ref = e.note ? "ref" : "";
+  return `<tr class="${ref}">
+    <td class="l">${i==null?"":i}</td>
+    <td class="l">${e.coin}</td>
+    <td class="l">${e.send_time}</td>
+    <td>${px(e.close)}</td>
+    <td>${px(e.open)}</td><td>${px(e.high)}</td><td>${px(e.low)}</td>
+    <td class="${cls(e.ret_bar)}">${fmtPct(e.ret_bar)}</td>
+    <td class="${cls(e.prior_24h)}">${fmtPct(e.prior_24h)}</td>
+    <td>${e.multiple.toFixed(2)}×</td>
+    <td>${e.quiet.toFixed(2)}×</td>
+    <td>${e.quiet4h.toFixed(2)}×</td>
+    <td class="${cls(e.ret_15m)}">${fmtPct(e.ret_15m)}</td>
+    <td class="${cls(e.ret_60m)}">${fmtPct(e.ret_60m)}</td>
+    <td class="${cls(e.ret_4h)}">${fmtPct(e.ret_4h)}</td>
+    <td class="${cls(e.ret_1d)}">${fmtPct(e.ret_1d)}</td>
+    <td class="note">${e.note||""}</td>
+  </tr>`;
+}
+const head = `<thead><tr>
+  <th class="l">幣</th><th class="l">發送時間（台北）</th><th>收盤價</th>
+  <th>當根漲幅</th><th>前24h</th>
+  <th>成交額倍率</th><th>前1h</th><th>前4h</th>
+  <th>+15m</th><th>+60m</th><th>+4h</th><th>+1d</th>
+  <th class="l">備註</th>
+</tr></thead>`;
+function miniRow(e) {
+  return `<tr class="${e.note?"ref":""}">
+    <td class="l">${e.coin}</td>
+    <td class="l">${e.send_time}</td>
+    <td>${px(e.close)}</td>
+    <td class="${cls(e.ret_bar)}">${fmtPct(e.ret_bar)}</td>
+    <td class="${cls(e.prior_24h)}">${fmtPct(e.prior_24h)}</td>
+    <td>${e.multiple.toFixed(2)}×</td>
+    <td>${e.quiet.toFixed(2)}×</td>
+    <td>${e.quiet4h.toFixed(2)}×</td>
+    <td class="${cls(e.ret_15m)}">${fmtPct(e.ret_15m)}</td>
+    <td class="${cls(e.ret_60m)}">${fmtPct(e.ret_60m)}</td>
+    <td class="${cls(e.ret_4h)}">${fmtPct(e.ret_4h)}</td>
+    <td class="${cls(e.ret_1d)}">${fmtPct(e.ret_1d)}</td>
+    <td class="note">${e.note||""}</td>
+  </tr>`;
+}
+const kpis = document.getElementById("kpis");
+const kpi = [
+  ["模擬警報", DATA.total + " 筆", "四幣合計"],
+  ["密度", DATA.per_day.toFixed(2) + " /日/幣", "各幣筆數÷評估天數後平均"],
+  ["+1d 中位", fmtPct(DATA.median_ret_1d), `有隔日的 ${DATA.n_fwd_1d} 筆 · 上漲 ${(DATA.pct_up_1d*100).toFixed(0)}%`],
+  ["+4h 中位", fmtPct(DATA.median_ret_4h), "+15m " + fmtPct(DATA.median_ret_15m) + " · +60m " + fmtPct(DATA.median_ret_60m)],
+  ["參考打中", Object.values(DATA.refs).filter(r=>r.hit).length + " / 4", "SAGA・GTC・SAND 中，QNT 刻意放掉"],
+];
+for (const [t,b,s] of kpi) {
+  const el = document.createElement("div");
+  el.className = "card";
+  el.innerHTML = `<div class="muted">${t}</div><div class="big">${b}</div><div class="muted">${s}</div>`;
+  kpis.appendChild(el);
+}
+const cards = document.getElementById("cards");
+const order = ["SAGA","GTC","SAND","QNT"];
+for (const c of order) {
+  const n = DATA.counts[c];
+  const el = document.createElement("div");
+  el.className = "card";
+  const list = DATA.events.filter(e => e.coin===c);
+  const first = list[0], last = list[list.length-1];
+  const span = list.length ? `${first.send_time.slice(5,16)} → ${last.send_time.slice(5,16)}` : "無";
+  el.innerHTML = `<h3>${c}</h3><div class="big">${n}</div>
+    <div class="muted">${span}</div>
+    <div class="muted">參考窗內 ${list.filter(e=>e.note).length} 筆</div>`;
+  cards.appendChild(el);
+}
+const refBody = document.querySelector("#refs tbody");
+const refOrder = ["saga","gtc","sand","qnt"];
+refBody.innerHTML = refOrder.map(id => {
+  const r = DATA.refs[id];
+  return `<tr><td class="l">${r.name}</td><td class="l ${r.hit?"hit":"miss"}">${r.hit?"打中":"未打中"}</td><td>${r.n}</td><td class="l">${r.first||"—"}</td></tr>`;
+}).join("");
+const by = document.getElementById("bycoin");
+for (const c of order) {
+  const list = DATA.events.filter(e => e.coin===c);
+  const sec = document.createElement("section");
+  sec.innerHTML = `<h2 style="margin-top:22px">${c} <span class="pill">${list.length} 筆</span></h2>
+    <div class="wrap" style="max-height:none"><table>${head}<tbody>${list.map(miniRow).join("")}</tbody></table></div>`;
+  by.appendChild(sec);
+}
+let coin = "ALL";
+const filters = document.getElementById("filters");
+function renderFilters() {
+  filters.innerHTML = "";
+  for (const c of ["ALL", ...order]) {
+    const b = document.createElement("button");
+    b.textContent = c==="ALL" ? "全部" : c;
+    if (c===coin) b.className = "on";
+    b.onclick = () => { coin=c; renderFilters(); render(); };
+    filters.appendChild(b);
+  }
+}
+function render() {
+  const rows = DATA.events.filter(e => coin==="ALL" || e.coin===coin);
+  document.getElementById("count").textContent = rows.length + " 筆";
+  document.querySelector("#feed tbody").innerHTML = rows.map((e,i)=>rowHtml(e,i+1)).join("");
+}
+const ex = DATA.events[0];
+document.getElementById("sample").textContent = ex ? `盯盤哨兵 · 上漲初期放量
+${ex.coin}（${ex.symbol}）
+發送：${ex.send_time} 台北（15m 收盤）
+收盤價 ${px(ex.close)}　當根 ${fmtPct(ex.ret_bar)}　前24h ${fmtPct(ex.prior_24h)}
+成交額 ${ex.multiple.toFixed(2)}× 過去 90 日均量
+前 1h 中位 ${ex.quiet.toFixed(2)}×　前 4h 中位 ${ex.quiet4h.toFixed(2)}×（安靜門檻 ≤3×）` : "（無警報）";
+document.getElementById("foot").textContent =
+  `共 ${DATA.total} 筆。密度 ${DATA.per_day.toFixed(3)} 次/日/幣。+1d 中位 ${fmtPct(DATA.median_ret_1d)}。評估區間 ${DATA.eval}。頁面產生 ${DATA.generated} 台北。`;
+renderFilters(); render();
+</script>
+</body>
+</html>
