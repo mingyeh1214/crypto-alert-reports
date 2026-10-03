@@ -29,41 +29,40 @@
 <body>
 <main>
   <h1>全市場 · 2026 年 9 月起（台北）初期放量＋合約 OI</h1>
-  <p class="muted">產生時間 2026-10-03 14:18（台北）。模擬從 2026-09-01 00:00（台北）收到最新一根 15 分 K，含 10 月。60 分冷卻仍會計入 9 月以前的觸發。這不是當時發出的 Telegram。正式 worker 仍只盯 SAGA／GTC／SAND／QNT。</p>
+  <p class="muted">產生時間 2026-10-03 14:35（台北）。模擬從 2026-09-01 00:00（台北）收到最新一根 15 分 K，含 10 月。60 分冷卻仍會計入 9 月以前的觸發。這不是當時發出的 Telegram。正式 worker 仍只盯 SAGA／GTC／SAND／QNT。</p>
   <h2>資料範圍</h2>
   <ul>
     <li>現貨 USDT 交易中：503 對；其中有 U 本位永續：363。槓桿代幣與穩定幣不進回測（仍在 universe CSV）。</li>
-    <li>主表（有 OI）：K 線檔 360、OI 檔 360。OI 日檔到 2026-10-01（UTC），起點 2026-08-01（z 視窗只要約 7 日，正式訊號還要 90 日 15 分均量）。</li>
-    <li>15 分 K 來自 data.binance.vision 月／日檔，尾端用 data-api klines。成交額用官方 quote volume。缺日可續跑 <code>run_full_market.py download</code>。</li>
+    <li>主表（有 OI）：K 線檔 360、OI 檔 360。OI 覆蓋到 2026-10-03 (live+vision)（UTC）；日檔之後用 live <code>openInterestHist</code>（www.binance.com，fapi 451 備援）補到最新。起點 2026-08-01（z 視窗約 7 日；正式訊號還要 90 日 15 分均量）。</li>
+    <li>15 分 K 來自 data.binance.vision 月／日檔，尾端用 data-api klines。成交額用官方 quote volume。缺日可續跑 <code>run_full_market.py download</code>；OI 缺口用 <code>run_full_market.py backfill_oi</code>。</li>
     <li>存活偏差：只含目前仍 TRADING 的幣，已下架不在樣本。</li>
     <li>磁碟：K 線 112 MB、OI 45 MB（壓縮 npz）。</li>
   </ul>
   <h2>主表規則（與線上 quiet_surge_early 相同）</h2>
-  <p>15 分收盤；前 8640 根（90 日）均量 ≥10 倍；前 1 小時與前 4 小時中位 ≤3 倍；當根收漲 ≥1%；前 24 小時 ≤+8%；合約張數近 1 小時增加且 15 分 OI 變化 z≥1（前 7 日）；同幣 60 分冷卻。進場價＝警報收盤，名義 100 美元，不含手續費。最大漲幅／最大跌幅：進場之後到資料中最新一根 15 分 K 的最高價、最低價，相對進場收盤。 愈早的警報有愈長時間去摸高、摸低，所以這兩欄不能拿來跟晚發出的警報比高低。10 月筆數少，是因為 OI 日檔只到 2026-10-01（UTC），大約台北 10/2 早上之後持倉不夠新，量價過了也不會進主表。</p>
-  <p>完整明細：<a href="full_market_events.csv">full_market_events.csv</a> · 幣種清單：<a href="universe_usdt.csv">universe_usdt.csv</a></p>
+  <p>15 分收盤；前 8640 根（90 日）均量 ≥10 倍；前 1 小時與前 4 小時中位 ≤3 倍；當根收漲 ≥1%；前 24 小時 ≤+8%；合約張數近 1 小時增加且 15 分 OI 變化 z≥1（前 7 日）；同幣 60 分冷卻。進場價＝警報收盤，名義 100 美元，不含手續費。最大漲幅／最大跌幅：進場之後到資料中最新一根 15 分 K 的最高價、最低價，相對進場收盤。</p>
   <div class="cards">
-    <div class="card"><b>619</b><span>訊號筆數</span></div>
+    <div class="card"><b>657</b><span>訊號筆數</span></div>
     <div class="card"><b>356</b><span>歷史夠長可評的幣</span></div>
-    <div class="card"><b>262</b><span>至少一筆的幣</span></div>
-    <div class="card"><b>0.0536</b><span>次／日／幣（有樣本的幣）</span></div>
+    <div class="card"><b>267</b><span>至少一筆的幣</span></div>
+    <div class="card"><b>0.0568</b><span>次／日／幣（有樣本的幣）</span></div>
   </div>
   <table>
     <thead><tr><th>持有</th><th>樣本</th><th>中位報酬</th><th>中位（$100）</th><th>平均報酬</th><th>上漲比例</th></tr></thead>
     <tbody>
-    <tr><td>+15 分</td><td>619</td><td>+0.00%</td><td>+0.00</td><td>+0.35%</td><td>48.6%</td></tr>
-<tr><td>+30 分</td><td>619</td><td>-0.17%</td><td>-0.17</td><td>+0.18%</td><td>44.6%</td></tr>
-<tr><td>+1 小時</td><td>619</td><td>-0.35%</td><td>-0.35</td><td>+0.04%</td><td>41.4%</td></tr>
-<tr><td>+4 小時</td><td>619</td><td>-0.75%</td><td>-0.75</td><td>-0.12%</td><td>35.5%</td></tr>
-<tr><td>+1 日</td><td>619</td><td>-1.27%</td><td>-1.27</td><td>+0.16%</td><td>40.7%</td></tr>
-<tr><td>警報後最大漲幅（高）</td><td>619</td><td>+20.16%</td><td>+20.16</td><td>+35.52%</td><td>—</td></tr>
-<tr><td>警報後最大跌幅（低）</td><td>619</td><td>-8.92%</td><td>-8.92</td><td>-9.73%</td><td>—</td></tr>
+    <tr><td>+15 分</td><td>657</td><td>+0.00%</td><td>+0.00</td><td>+0.33%</td><td>48.1%</td></tr>
+<tr><td>+30 分</td><td>657</td><td>-0.17%</td><td>-0.17</td><td>+0.16%</td><td>44.7%</td></tr>
+<tr><td>+1 小時</td><td>657</td><td>-0.37%</td><td>-0.37</td><td>+0.05%</td><td>41.7%</td></tr>
+<tr><td>+4 小時</td><td>654</td><td>-0.69%</td><td>-0.69</td><td>-0.08%</td><td>36.9%</td></tr>
+<tr><td>+1 日</td><td>638</td><td>-1.26%</td><td>-1.26</td><td>+0.11%</td><td>40.8%</td></tr>
+<tr><td>警報後最大漲幅（高）</td><td>657</td><td>+19.33%</td><td>+19.33</td><td>+33.90%</td><td>—</td></tr>
+<tr><td>警報後最大跌幅（低）</td><td>657</td><td>-8.68%</td><td>-8.68</td><td>-9.49%</td><td>—</td></tr>
     </tbody>
   </table>
   <h2>訊號較多的幣（前 30）</h2>
   <table>
     <thead><tr><th>幣</th><th>筆數</th><th>可評日數</th><th>次／日</th></tr></thead>
     <tbody>
-    <tr><td>AWE</td><td>9</td><td>33</td><td>0.276</td></tr><tr><td>T</td><td>9</td><td>33</td><td>0.276</td></tr><tr><td>CAKE</td><td>8</td><td>33</td><td>0.245</td></tr><tr><td>UNI</td><td>8</td><td>33</td><td>0.245</td></tr><tr><td>HIVE</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>LA</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>METIS</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>RONIN</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>INIT</td><td>6</td><td>33</td><td>0.184</td></tr><tr><td>MET</td><td>6</td><td>33</td><td>0.184</td></tr><tr><td>API3</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>FRAX</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>JOE</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>KMNO</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>KNC</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>POLYX</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>ROSE</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>STX</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>XVG</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>ZEN</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>2Z</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ACH</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ADA</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ALICE</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ANKR</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ARPA</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>BIGTIME</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>FLUX</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>FORM</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>GAS</td><td>4</td><td>33</td><td>0.123</td></tr>
+    <tr><td>T</td><td>9</td><td>33</td><td>0.276</td></tr><tr><td>AWE</td><td>8</td><td>33</td><td>0.245</td></tr><tr><td>CAKE</td><td>8</td><td>33</td><td>0.245</td></tr><tr><td>RONIN</td><td>8</td><td>33</td><td>0.245</td></tr><tr><td>UNI</td><td>8</td><td>33</td><td>0.245</td></tr><tr><td>FRAX</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>HIVE</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>INIT</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>LA</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>METIS</td><td>7</td><td>33</td><td>0.215</td></tr><tr><td>ILV</td><td>6</td><td>33</td><td>0.184</td></tr><tr><td>KNC</td><td>6</td><td>33</td><td>0.184</td></tr><tr><td>MET</td><td>6</td><td>33</td><td>0.184</td></tr><tr><td>API3</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>KMNO</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>NEIRO</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>POLYX</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>ROSE</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>STX</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>XVG</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>ZEN</td><td>5</td><td>33</td><td>0.153</td></tr><tr><td>2Z</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ACH</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ADA</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ALICE</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ANKR</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>ARPA</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>BIGTIME</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>FLUX</td><td>4</td><td>33</td><td>0.123</td></tr><tr><td>FORM</td><td>4</td><td>33</td><td>0.123</td></tr>
     </tbody>
   </table>
   <h2>+4 小時收益最高的 40 筆（每筆獨立 $100，9 月起到最新）</h2>
@@ -90,6 +89,7 @@
 <tr><td>2026-09-19 02:15</td><td>ZEN</td><td>7.498</td><td>12.4×</td><td class="up">+0.03<br><span>+0.03%</span></td><td class="up">+1.71<br><span>+1.71%</span></td><td class="up">+3.85<br><span>+3.85%</span></td><td class="up">+10.78<br><span>+10.78%</span></td><td class="up">+3.84<br><span>+3.84%</span></td><td class="up">+14.60<br><span>+14.60%</span></td><td class="dn">-13.04<br><span>-13.04%</span></td></tr>
 <tr><td>2026-09-01 21:15</td><td>FF</td><td>0.09208</td><td>16.8×</td><td class="up">+1.15<br><span>+1.15%</span></td><td class="up">+2.69<br><span>+2.69%</span></td><td class="up">+10.52<br><span>+10.52%</span></td><td class="up">+10.46<br><span>+10.46%</span></td><td class="up">+19.10<br><span>+19.10%</span></td><td class="up">+100.74<br><span>+100.74%</span></td><td class="dn">-2.73<br><span>-2.73%</span></td></tr>
 <tr><td>2026-09-09 21:00</td><td>XVG</td><td>0.003083</td><td>41.5×</td><td class="dn">-1.04<br><span>-1.04%</span></td><td class="dn">-0.45<br><span>-0.45%</span></td><td class="dn">-1.39<br><span>-1.39%</span></td><td class="up">+9.80<br><span>+9.80%</span></td><td class="dn">-13.59<br><span>-13.59%</span></td><td class="up">+22.61<br><span>+22.61%</span></td><td class="dn">-18.13<br><span>-18.13%</span></td></tr>
+<tr><td>2026-10-02 15:15</td><td>MANA</td><td>0.0947</td><td>144.6×</td><td class="up">+2.64<br><span>+2.64%</span></td><td class="up">+5.28<br><span>+5.28%</span></td><td class="up">+6.76<br><span>+6.76%</span></td><td class="up">+9.71<br><span>+9.71%</span></td><td>—</td><td class="up">+22.70<br><span>+22.70%</span></td><td class="dn">-0.84<br><span>-0.84%</span></td></tr>
 <tr><td>2026-09-08 13:45</td><td>HAEDAL</td><td>0.01954</td><td>15.3×</td><td class="up">+0.10<br><span>+0.10%</span></td><td class="up">+3.02<br><span>+3.02%</span></td><td class="up">+1.43<br><span>+1.43%</span></td><td class="up">+9.62<br><span>+9.62%</span></td><td class="dn">-2.35<br><span>-2.35%</span></td><td class="up">+22.26<br><span>+22.26%</span></td><td class="dn">-16.99<br><span>-16.99%</span></td></tr>
 <tr><td>2026-09-05 20:30</td><td>NMR</td><td>9.37</td><td>11.8×</td><td class="up">+0.11<br><span>+0.11%</span></td><td class="up">+1.07<br><span>+1.07%</span></td><td class="up">+3.95<br><span>+3.95%</span></td><td class="up">+9.50<br><span>+9.50%</span></td><td class="up">+1.71<br><span>+1.71%</span></td><td class="up">+65.42<br><span>+65.42%</span></td><td class="dn">-8.96<br><span>-8.96%</span></td></tr>
 <tr><td>2026-09-22 20:45</td><td>BCH</td><td>296.9</td><td>138.5×</td><td class="up">+4.21<br><span>+4.21%</span></td><td class="up">+7.31<br><span>+7.31%</span></td><td class="up">+6.64<br><span>+6.64%</span></td><td class="up">+9.13<br><span>+9.13%</span></td><td class="up">+17.11<br><span>+17.11%</span></td><td class="up">+23.41<br><span>+23.41%</span></td><td class="dn">-0.98<br><span>-0.98%</span></td></tr>
@@ -104,7 +104,6 @@
 <tr><td>2026-09-23 06:30</td><td>UNI</td><td>9.76</td><td>35.0×</td><td class="up">+3.16<br><span>+3.16%</span></td><td class="up">+4.31<br><span>+4.31%</span></td><td class="up">+3.65<br><span>+3.65%</span></td><td class="up">+7.77<br><span>+7.77%</span></td><td class="dn">-5.87<br><span>-5.87%</span></td><td class="up">+12.11<br><span>+12.11%</span></td><td class="dn">-13.45<br><span>-13.45%</span></td></tr>
 <tr><td>2026-09-03 09:15</td><td>AR</td><td>2.357</td><td>30.5×</td><td class="up">+3.69<br><span>+3.69%</span></td><td class="up">+3.22<br><span>+3.22%</span></td><td class="up">+1.65<br><span>+1.65%</span></td><td class="up">+7.72<br><span>+7.72%</span></td><td class="up">+10.01<br><span>+10.01%</span></td><td class="up">+124.40<br><span>+124.40%</span></td><td class="dn">-0.21<br><span>-0.21%</span></td></tr>
 <tr><td>2026-09-26 14:45</td><td>TNSR</td><td>0.0403</td><td>11.6×</td><td class="up">+2.23<br><span>+2.23%</span></td><td class="up">+2.48<br><span>+2.48%</span></td><td class="up">+5.71<br><span>+5.71%</span></td><td class="up">+7.69<br><span>+7.69%</span></td><td class="up">+1.49<br><span>+1.49%</span></td><td class="up">+12.66<br><span>+12.66%</span></td><td class="dn">-8.68<br><span>-8.68%</span></td></tr>
-<tr><td>2026-09-29 05:00</td><td>0G</td><td>0.2737</td><td>12.4×</td><td class="up">+2.27<br><span>+2.27%</span></td><td class="up">+0.66<br><span>+0.66%</span></td><td class="dn">-1.39<br><span>-1.39%</span></td><td class="up">+7.60<br><span>+7.60%</span></td><td class="up">+21.15<br><span>+21.15%</span></td><td class="up">+33.21<br><span>+33.21%</span></td><td class="dn">-2.23<br><span>-2.23%</span></td></tr>
 <tr><td>2026-09-26 18:45</td><td>DASH</td><td>65.92</td><td>19.0×</td><td class="dn">-0.03<br><span>-0.03%</span></td><td class="up">+0.76<br><span>+0.76%</span></td><td class="up">+1.85<br><span>+1.85%</span></td><td class="up">+7.57<br><span>+7.57%</span></td><td class="up">+7.81<br><span>+7.81%</span></td><td class="up">+11.71<br><span>+11.71%</span></td><td class="dn">-15.99<br><span>-15.99%</span></td></tr>
 <tr><td>2026-09-13 08:15</td><td>HIVE</td><td>0.0494</td><td>51.0×</td><td class="up">+0.81<br><span>+0.81%</span></td><td class="up">+0.61<br><span>+0.61%</span></td><td class="up">+1.82<br><span>+1.82%</span></td><td class="up">+7.49<br><span>+7.49%</span></td><td class="dn">-0.20<br><span>-0.20%</span></td><td class="up">+34.21<br><span>+34.21%</span></td><td class="dn">-1.62<br><span>-1.62%</span></td></tr>
 <tr><td>2026-09-10 19:45</td><td>ETHFI</td><td>0.6458</td><td>14.0×</td><td class="dn">-0.73<br><span>-0.73%</span></td><td class="dn">-1.87<br><span>-1.87%</span></td><td class="dn">-1.46<br><span>-1.46%</span></td><td class="up">+7.45<br><span>+7.45%</span></td><td class="dn">-3.22<br><span>-3.22%</span></td><td class="up">+27.31<br><span>+27.31%</span></td><td class="dn">-11.51<br><span>-11.51%</span></td></tr>
