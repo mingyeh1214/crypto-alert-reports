@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>長期安靜後突然放量 · 四幣現貨</title>
+<style>
+  :root {
+    --bg:#f6f4ef; --card:#fff; --ink:#1c1915; --muted:#6b645c; --line:#e4ddd2;
+    --accent:#0f6e56; --accent2:#8a4b08; --bad:#9b2c2c; --good:#0f6e56;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.55 "Iowan Old Style","Palatino Linotype",Palatino,serif; color:var(--ink); background:var(--bg); }
+  header { padding:28px 28px 8px; max-width:1100px; margin:0 auto; }
+  h1 { font-size:28px; font-weight:600; margin:0 0 6px; letter-spacing:-0.02em; }
+  h2 { font-size:18px; margin:28px 0 8px; }
+  h3 { font-size:15px; margin:18px 0 6px; }
+  p, li { color:var(--ink); }
+  .sub { color:var(--muted); margin:0; }
+  main { max-width:1100px; margin:0 auto; padding:8px 28px 64px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:12px 0; }
+  .rec { border-color:#b7d7cb; background:#f3faf7; }
+  .k { font-variant-numeric:tabular-nums; font-family:ui-sans-serif,system-ui,sans-serif; }
+  table { width:100%; border-collapse:collapse; font-size:13px; font-family:ui-sans-serif,system-ui,sans-serif; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; white-space:nowrap; }
+  th { color:var(--muted); font-weight:600; font-size:12px; }
+  .wrap td { white-space:normal; }
+  .note { color:var(--muted); font-size:13px; }
+  code { font-family:ui-monospace,monospace; font-size:12.5px; }
+  .filters { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
+  select, input { font:13px ui-sans-serif,system-ui,sans-serif; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#fff; }
+  .tag { display:inline-block; padding:1px 6px; border-radius:999px; font-size:11px; }
+  .STRONG { background:#e5f6ef; color:#0f6e56; }
+  .FAIL { background:#fde8e8; color:#9b2c2c; }
+  .HOLD { background:#f3f1ec; color:#6b645c; }
+  footer { color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>長期安靜，然後突然放量</h1>
+  <p class="sub">現貨 SAGA / GTC / SAND / QNT · 1 分 K 與 15 分 K · 對照 1 日、1 週、1 個月、3 個月成交額基準</p>
+  <p class="sub">樣本 2026-06-01 00:00 起；檔案收到 SAGA 2026-10-03 07:54、GTC 2026-10-03 08:26、SAND 2026-10-03 09:14、QNT 2026-10-03 09:46（台北時間）。3 個月基準要滿窗才計分，實際評估窗是 2026-08-30 之後約 34 天。</p>
+</header>
+<main>
+
+<section class="card rec">
+  <h2 style="margin-top:0">建議給哨兵的設定</h2>
+  <p><strong>15 分 K，成交額 ≥ 過去 90 天均量的 10 倍，而且前 1 小時的典型成交額仍 ≤ 該均量的 3 倍。</strong>觸發後冷卻 60 分鐘。</p>
+  <ul>
+    <li>成交額 = 每根 K 的 <code>close × volume</code>；15 分 K 是 15 根 1 分成交額加總。</li>
+    <li>基準只用已走完的窗，不含當根。90 天 = 8,640 根 15 分 K。</li>
+    <li>四段參考行情都打中（4/4），四幣平均每天約 <span class="k">0.47</span> 次、合計 64 次。</li>
+    <li>優勢不在接下來 15–60 分鐘（上漲約五成，中位數接近 0），而在之後一天：中位數 <span class="k">+2.19%</span>，上漲 <span class="k">68%</span>，≥+1% 占 <span class="k">62%</span>，跌破失效門檻 <span class="k">22%</span>。</li>
+    <li>同一條規則若把基準改成 1 日或 1 週，隔日中位數回到 0 附近，而且漏掉 SAND 10/2 或 QNT 起漲。要的是「相對一季很安靜」，不是「相對昨天放量」。</li>
+  </ul>
+  <p class="note">這是 480 組裡、在「至少 40 次、每日 ≤8 次」的條件下，依參考命中、4 小時中位數、60 分鐘有效率、密度挑出的一組。N=64、評估窗只有一個月出頭，數字是方向不是保證。箱體突破這次不當主訊號。</p>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">規則</h2>
+  <ul>
+    <li><strong>倍數（均量）</strong>：當根成交額 ÷ 前窗平均。中位數倍數另算；GTC 的 1 分 K 有 69% 是 0 量，1 個月／3 個月中位數整段是 0，倍數沒有定義。15 分 K 四幣中位數都 &gt; 0。</li>
+    <li><strong>z</strong>：(當根 − 前窗平均) ÷ 前窗標準差。門檻試了 2、2.5、3、4、6、8。</li>
+    <li><strong>突然</strong>：前 60 分鐘（15 分 K 為 4 根）的典型成交額 ÷ 長基準 ≤ 2× 或 ≤ 3×。典型值用中位數，中位數為 0 時改用均量。</li>
+    <li><strong>有效 STRONG</strong>：該視野收盤漲幅達標，且視野內平均成交額仍 ≥ 基準的 2 倍。漲幅門檻：15 分 +0.5%、60 分 +1%、4 小時 +2%、1 日 +4%。</li>
+    <li><strong>失效 FAIL</strong>：收盤跌破 15 分 −0.8%、60 分 −1%、4 小時 −1.5%、1 日 −2%。其餘 HOLD。</li>
+    <li>參考窗（台北）：SAGA 9/15 00:00–9/16 06:00（錨 17:37）、GTC 9/30 00:00–21:00（錨 15:30）、SAND 10/2 00:00–18:00（錨 12:59）、QNT 起漲 9/23 12:00–9/25 00:00（錨 9/24 12:00）。命中 = 冷卻後第一筆落在窗內。</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">暖機：3 個月不使用截斷窗</h2>
+  <p>資料從 2026-06-01 00:00 連續 1 分 K（四幣都沒有缺棒）。基準必須滿窗才產生訊號，所以：</p>
+  <table>
+    <thead><tr><th>基準</th><th>1 分 K 根數</th><th>15 分 K 根數</th><th>第一根可計分（約）</th><th>可評估天數</th></tr></thead>
+    <tbody>
+      <tr><td>1 日</td><td class="k">1,440</td><td class="k">96</td><td>2026-06-02 00:01</td><td>約 123 天</td></tr>
+      <tr><td>1 週</td><td class="k">10,080</td><td class="k">672</td><td>2026-06-08</td><td>約 117 天</td></tr>
+      <tr><td>1 個月（30 天）</td><td class="k">43,200</td><td class="k">2,880</td><td>2026-07-01</td><td>約 94 天</td></tr>
+      <tr><td>3 個月（90 天）</td><td class="k">129,600</td><td class="k">8,640</td><td>2026-08-30 00:15</td><td>約 34 天</td></tr>
+    </tbody>
+  </table>
+  <p class="note">6 月到 8 月中的行情不能用 3 個月基準打分。四段參考行情都落在暖機之後，所以命中比較仍然公平；但「每天幾次、隔日賺多少」只代表 8/30–10/3 這段。</p>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">同一條規則，只換基準長度</h2>
+  <p>15 分 K、均量 ≥ 10×、前 1 小時 ≤ 3×。只有 3 個月同時打中四段，而且隔日中位數是正的。</p>
+  <table>
+    <thead><tr><th>基準</th><th>次數</th><th>每幣每日</th><th>參考</th><th>中位 60 分</th><th>中位 4 小時</th><th>中位 1 日</th><th>1 日上漲</th><th>1 日 ≥+1%</th><th>1 日失效</th><th>60 分 STRONG</th></tr></thead>
+    <tbody>
+      <tr><td>1 日</td><td>297</td><td>0.60</td><td>2/4</td><td>+0.00%</td><td>+0.00%</td><td>-0.09%</td><td>43%</td><td>35%</td><td>24%</td><td>14%</td></tr>
+<tr><td>1 週</td><td>205</td><td>0.44</td><td>2/4</td><td>+0.00%</td><td>+0.00%</td><td>-0.25%</td><td>43%</td><td>35%</td><td>28%</td><td>16%</td></tr>
+<tr><td>1 個月</td><td>149</td><td>0.40</td><td>3/4</td><td>+0.00%</td><td>+0.00%</td><td>+0.00%</td><td>49%</td><td>39%</td><td>26%</td><td>15%</td></tr>
+<tr><td>3 個月</td><td>64</td><td>0.47</td><td>4/4</td><td>+0.01%</td><td>+0.57%</td><td>+2.19%</td><td>68%</td><td>62%</td><td>22%</td><td>19%</td></tr>
+    </tbody>
+  </table>
+  <h3>各週期在「打中 4/4、每幣每日 ≤2」裡，隔日中位數最好的一組</h3>
+  <p class="note">1 分 K 的 1 日、1 週沒有同時滿足密度與 4/4 後仍值得看的隔日優勢，表內不列。</p>
+  <table>
+    <thead><tr><th>週期</th><th>基準</th><th>門檻</th><th>安靜</th><th>次數</th><th>每幣每日</th><th>中位 4 小時</th><th>中位 1 日</th><th>1 日上漲</th><th>60 分 STRONG</th></tr></thead>
+    <tbody><tr><td>1m</td><td>1 個月</td><td>z 分數 ≥ 8</td><td>無</td><td>752</td><td>1.99</td><td>+0.00%</td><td>+0.21%</td><td>51%</td><td>17%</td></tr>
+<tr><td>1m</td><td>3 個月</td><td>z 分數 ≥ 8</td><td>≤2×</td><td>169</td><td>1.23</td><td>+0.16%</td><td>+2.11%</td><td>66%</td><td>14%</td></tr>
+<tr><td>15m</td><td>1 日</td><td>z 分數 ≥ 6</td><td>≤2×</td><td>301</td><td>0.61</td><td>+0.00%</td><td>+0.00%</td><td>47%</td><td>13%</td></tr>
+<tr><td>15m</td><td>1 週</td><td>z 分數 ≥ 3</td><td>無</td><td>663</td><td>1.41</td><td>+0.00%</td><td>+0.00%</td><td>50%</td><td>18%</td></tr>
+<tr><td>15m</td><td>1 個月</td><td>z 分數 ≥ 2.5</td><td>≤3×</td><td>332</td><td>0.88</td><td>-0.02%</td><td>+0.34%</td><td>52%</td><td>12%</td></tr>
+<tr><td>15m</td><td>3 個月</td><td>均量倍數 ≥ 30</td><td>無</td><td>150</td><td>1.09</td><td>+0.18%</td><td>+6.50%</td><td>62%</td><td>46%</td></tr></tbody>
+  </table>
+  <p>短基準（1 日、1 週）很容易在普通爆量上打到 z 或 10 倍，參考日也常被掃到，但隔日中位數約 0。3 個月均量把「這一季很少見」和「今天比昨天大聲」分開。1 個月介於中間，隔日中位數多半仍接近 0。</p>
+  <p>若拿掉安靜條件、把 15 分 K 的 3 個月均量門檻拉到 30×：150 次、每幣每日 1.09、仍是 4/4，60 分 STRONG 升到 46%，隔日中位數 +6.5%。那是「已經在噴」的確認，不是從安靜裡第一下跳出來。哨兵主訊號用 10× 加安靜；30× 可當第二層，表示這根本身就是極端放量。</p>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">參考行情的量有多大</h2>
+  <p>下面是各參考窗裡，15 分 K 成交額相對該基準的峰值（不是建議規則的觸發棒）。GTC、SAND、QNT 主升那根相對 3 個月均量是幾百倍；QNT 9/24 起漲日的峰值只有約 36×，所以門檻不能設到 30× 才想抓起漲。</p>
+  <table>
+    <thead><tr><th>行情</th><th>基準</th><th>峰值時間</th><th>均量倍數</th><th>中位數倍數</th><th>z</th><th>窗內第一根中位數 ≥10×</th></tr></thead>
+    <tbody><tr><td>SAGA 9/15 主升</td><td>1 日</td><td>2026-09-15 17:45</td><td>12.4×</td><td>26.4×</td><td>7.8</td><td>2026-09-15 02:45</td></tr>
+<tr><td>SAGA 9/15 主升</td><td>1 週</td><td>2026-09-16 01:45</td><td>17.9×</td><td>54.7×</td><td>10.0</td><td>2026-09-15 02:45</td></tr>
+<tr><td>SAGA 9/15 主升</td><td>1 個月</td><td>2026-09-16 01:45</td><td>48.5×</td><td>151.7×</td><td>18.7</td><td>2026-09-15 02:45</td></tr>
+<tr><td>SAGA 9/15 主升</td><td>3 個月</td><td>2026-09-16 01:45</td><td>53.6×</td><td>158.2×</td><td>18.6</td><td>2026-09-15 02:45</td></tr>
+<tr><td>GTC 9/30</td><td>1 日</td><td>2026-09-30 15:45</td><td>346.2×</td><td>931.2×</td><td>157.2</td><td>2026-09-30 03:00</td></tr>
+<tr><td>GTC 9/30</td><td>1 週</td><td>2026-09-30 15:45</td><td>426.1×</td><td>1032.4×</td><td>225.5</td><td>2026-09-30 03:00</td></tr>
+<tr><td>GTC 9/30</td><td>1 個月</td><td>2026-09-30 15:45</td><td>666.5×</td><td>2121.0×</td><td>296.2</td><td>2026-09-30 00:45</td></tr>
+<tr><td>GTC 9/30</td><td>3 個月</td><td>2026-09-30 15:45</td><td>488.2×</td><td>1892.9×</td><td>170.1</td><td>2026-09-30 00:45</td></tr>
+<tr><td>SAND 10/2</td><td>1 日</td><td>2026-10-02 15:15</td><td>119.5×</td><td>251.8×</td><td>68.8</td><td>2026-10-02 00:00</td></tr>
+<tr><td>SAND 10/2</td><td>1 週</td><td>2026-10-02 15:15</td><td>174.9×</td><td>317.2×</td><td>86.0</td><td>2026-10-02 13:15</td></tr>
+<tr><td>SAND 10/2</td><td>1 個月</td><td>2026-10-02 15:15</td><td>217.1×</td><td>391.3×</td><td>127.9</td><td>2026-10-02 00:00</td></tr>
+<tr><td>SAND 10/2</td><td>3 個月</td><td>2026-10-02 15:15</td><td>320.3×</td><td>695.8×</td><td>110.9</td><td>2026-10-02 00:00</td></tr>
+<tr><td>QNT 9/24 起漲</td><td>1 日</td><td>2026-09-24 22:00</td><td>14.3×</td><td>22.1×</td><td>11.0</td><td>2026-09-24 21:30</td></tr>
+<tr><td>QNT 9/24 起漲</td><td>1 週</td><td>2026-09-24 22:00</td><td>14.9×</td><td>26.2×</td><td>10.7</td><td>2026-09-23 22:15</td></tr>
+<tr><td>QNT 9/24 起漲</td><td>1 個月</td><td>2026-09-24 22:00</td><td>27.5×</td><td>54.6×</td><td>16.4</td><td>2026-09-23 20:15</td></tr>
+<tr><td>QNT 9/24 起漲</td><td>3 個月</td><td>2026-09-24 22:00</td><td>35.5×</td><td>75.0×</td><td>18.4</td><td>2026-09-23 20:15</td></tr>
+<tr><td>GTC 10/2</td><td>1 日</td><td>2026-10-02 05:45</td><td>19.8×</td><td>47.1×</td><td>9.7</td><td>2026-10-02 04:15</td></tr>
+<tr><td>GTC 10/2</td><td>1 週</td><td>2026-10-02 09:30</td><td>45.1×</td><td>612.1×</td><td>12.2</td><td>2026-10-02 00:00</td></tr>
+<tr><td>GTC 10/2</td><td>1 個月</td><td>2026-10-02 09:30</td><td>168.2×</td><td>2386.3×</td><td>25.0</td><td>2026-10-02 00:00</td></tr>
+<tr><td>GTC 10/2</td><td>3 個月</td><td>2026-10-02 09:30</td><td>325.3×</td><td>2367.6×</td><td>42.7</td><td>2026-10-02 00:00</td></tr>
+<tr><td>QNT 9/27 主升</td><td>1 日</td><td>2026-09-27 07:30</td><td>13.2×</td><td>25.7×</td><td>8.7</td><td>2026-09-26 23:45</td></tr>
+<tr><td>QNT 9/27 主升</td><td>1 週</td><td>2026-09-27 09:45</td><td>40.1×</td><td>159.6×</td><td>14.2</td><td>2026-09-26 18:00</td></tr>
+<tr><td>QNT 9/27 主升</td><td>1 個月</td><td>2026-09-27 09:45</td><td>138.7×</td><td>756.8×</td><td>28.7</td><td>2026-09-26 18:00</td></tr>
+<tr><td>QNT 9/27 主升</td><td>3 個月</td><td>2026-09-27 09:45</td><td>293.4×</td><td>1142.4×</td><td>49.1</td><td>2026-09-26 18:00</td></tr></tbody>
+  </table>
+</section>
+
+<section class="card wrap">
+  <h2 style="margin-top:0">建議規則實際打在哪</h2>
+  <p>領先時間是相對各段「下午錨點」。規則打的是當天第一根從安靜變成 10× 的 15 分 K，所以常比重心早約 12 小時。這是提早，不是打在高潮棒上。</p>
+  <table>
+    <thead><tr><th>錨點</th><th>第一筆</th><th>相對錨點</th><th>倍數</th><th>之後</th></tr></thead>
+    <tbody><tr><td>SAGA 9/15 17:37</td><td>2026-09-15 05:00</td><td>提前 12.6 小時</td><td>15.3×</td><td>05:00 觸發；其後 1 日 +25.6%。15:30 還有第二筆。</td></tr>
+<tr><td>GTC 9/30 15:30</td><td>2026-09-30 03:00</td><td>提前 12.5 小時</td><td>21.4×</td><td>03:00 先觸發（其後 1 日 +6.3%），午後主升時前一小時已不安靜，沒有第二筆。</td></tr>
+<tr><td>SAND 10/2 12:59</td><td>2026-10-02 00:00</td><td>提前 13.0 小時</td><td>10.8×</td><td>00:00 觸發，其後 1 日 +40.5%；13:15 再一筆，其後 4 小時 +39.5%。</td></tr>
+<tr><td>QNT 9/24 中午</td><td>2026-09-23 22:15</td><td>提前 13.8 小時</td><td>15.5×</td><td>9/23 22:15 觸發，其後 1 日 +10.2%。9/22 13:15 與 18:15 已先響。</td></tr></tbody>
+  </table>
+  <h3>沒有算進 4/4、但值得知道的</h3>
+  <ul>
+    <li>SAGA 9/19 01:00 有一筆，其後 1 日 +18%。9/20 當天沒有通過「前一小時仍安靜」的 10×。9/23 00:30 與 12:45 有，其中 00:30 的 1 日是 +27%，但 60 分與 4 小時是虧的。</li>
+    <li>GTC 10/2 日內主升沒再觸發（前一小時已經很熱）。10/1 13:45 有一筆，其後 1 日 +59.7%。</li>
+    <li>QNT 9/27 高潮不在安靜窗裡。9/26 14:00 那筆其後 1 日 +69%，落在主升窗開始前幾小時。9/22 18:15（舊哨兵 CONFIRM 同一分鐘）這條規則也響了，其後 1 日 +9.6%。</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">觸發之後還算不算數</h2>
+  <p>量能延續 = 該視野內平均成交額仍 ≥ 3 個月均量的 2 倍。STRONG 還要收盤漲幅達標。短視野幾乎是硬幣；量其實常常還在（60 分仍 ≥2× 的約 66%），但價格要等到數小時到一天才分開。</p>
+  <table>
+    <thead><tr><th>視野</th><th>有報價</th><th>中位數</th><th>平均</th><th>上漲</th><th>≥+1%</th><th>失效</th><th>量仍 ≥2×</th><th>STRONG</th></tr></thead>
+    <tbody><tr><td>15 分</td><td>64</td><td>+0.03%</td><td>+0.70%</td><td>53%</td><td>11%</td><td>16%</td><td>69%</td><td>19%</td></tr>
+<tr><td>60 分</td><td>64</td><td>+0.01%</td><td>+0.58%</td><td>50%</td><td>25%</td><td>19%</td><td>66%</td><td>19%</td></tr>
+<tr><td>4 小時</td><td>64</td><td>+0.57%</td><td>+1.35%</td><td>59%</td><td>45%</td><td>14%</td><td>59%</td><td>17%</td></tr>
+<tr><td>1 日</td><td>63</td><td>+2.19%</td><td>+4.41%</td><td>68%</td><td>62%</td><td>22%</td><td>54%</td><td>33%</td></tr></tbody>
+  </table>
+  <h3>分幣（建議規則，64 筆）</h3>
+  <table>
+    <thead><tr><th>幣</th><th>次數</th><th>每日</th><th>中位 60 分</th><th>中位 4 小時</th><th>中位 1 日</th><th>1 日上漲</th><th>60 分 STRONG</th><th>60 分 FAIL</th><th>15 分 STRONG</th><th>4 小時 FAIL</th></tr></thead>
+    <tbody><tr><td>SAGA</td><td>15</td><td>0.44</td><td>-0.30%</td><td>-0.20%</td><td>-0.12%</td><td>47%</td><td>47%</td><td>33%</td><td>47%</td><td>40%</td></tr>
+<tr><td>GTC</td><td>18</td><td>0.52</td><td>+0.01%</td><td>+0.75%</td><td>+2.86%</td><td>78%</td><td>6%</td><td>22%</td><td>11%</td><td>6%</td></tr>
+<tr><td>SAND</td><td>17</td><td>0.49</td><td>+0.42%</td><td>+0.57%</td><td>+1.47%</td><td>62%</td><td>6%</td><td>12%</td><td>12%</td><td>12%</td></tr>
+<tr><td>QNT</td><td>14</td><td>0.41</td><td>-0.10%</td><td>+0.31%</td><td>+3.83%</td><td>86%</td><td>21%</td><td>7%</td><td>7%</td><td>0%</td></tr></tbody>
+  </table>
+  <p class="note">SAGA 的隔日中位數是負的（−0.1%）：9/15、9/19 那類第一波是賺的，9/25–9/27 幾筆放量發生在已經拉高之後，隔日回吐（例如 9/25 05:30 其後 1 日 −37%）。GTC、QNT 的隔日中位數約 +3% 到 +4%。樣本各只有 14–18 筆。</p>
+  <h3>前 24 小時價格波動（1 日已實現波動，中位數 0.00452）</h3>
+  <p>觸發前 24 小時較安靜的那一半，隔日更好一點。可以當加分，不必當硬門檻，否則樣本又砍半。</p>
+  <table>
+    <thead><tr><th></th><th>筆數</th><th>中位 60 分</th><th>中位 4 小時</th><th>中位 1 日</th><th>1 日上漲</th><th>1 日 ≥+1%</th></tr></thead>
+    <tbody><tr><td>低波動（≤中位數）</td><td>32</td><td>-0.01%</td><td>+0.69%</td><td>+2.80%</td><td>78%</td><td>69%</td></tr>
+<tr><td>高波動</td><td>32</td><td>+0.12%</td><td>+0.45%</td><td>+1.79%</td><td>58%</td><td>55%</td></tr></tbody>
+  </table>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">建議規則的 64 筆</h2>
+  <div class="filters">
+    <select id="coin"><option value="">全部幣</option><option>SAGA</option><option>GTC</option><option>SAND</option><option>QNT</option></select>
+    <select id="lab"><option value="">1 日標籤</option><option>STRONG</option><option>HOLD</option><option>FAIL</option></select>
+    <input id="q" placeholder="時間關鍵字，例如 09-15"/>
+  </div>
+  <div style="overflow:auto">
+  <table id="ev">
+    <thead><tr><th>幣</th><th>時間</th><th>倍數</th><th>前1小時/基準</th><th>z</th><th>15 分</th><th>60 分</th><th>4 小時</th><th>1 日</th><th>60 分量倍數</th><th>1 日標籤</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <p class="note" id="count"></p>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">不要用的</h2>
+  <ul>
+    <li><strong>1 分 K 的中位數基準</strong>：GTC 1 個月與 3 個月中位數是 0（零量分鐘 69%），倍數會爆掉。SAND／SAGA 的 1 分中位數可用，但和 GTC 無法共用同一條規則。</li>
+    <li><strong>1 日、1 週當主基準</strong>：警報密、隔日沒有優勢。它們適合描述「今天突然比昨天大聲」，不符合「量長期不大、然後才噴」。</li>
+    <li><strong>把 z≥2 當警報</strong>：太密。15 分 K、3 個月、z≥2 且不安靜，每幣每天接近 4 次，隔日中位數雖正，但不是突然放量。</li>
+    <li><strong>期待 15 分鐘內量價一起擴</strong>：建議規則的 15 分 STRONG 只有約 19%。這條是狀態切換，不是搶當根。</li>
+  </ul>
+</section>
+
+<footer>
+  <p>產出時間 2026-10-03 11:25（台北）。網格 480 組：2 週期 × 4 基準 ×（均量倍數、中位數倍數各 7 個門檻 + z 的 6 個門檻）× 安靜條件（無 / ≤2 / ≤3）。完整網格 <code>long_quiet_volume_surge_grid.csv</code>，這 64 筆 <code>long_quiet_volume_surge_events.csv</code>，摘要 <code>long_quiet_volume_surge_summary.json</code>。</p>
+</footer>
+</main>
+<script>
+const EVENTS = [{"coin": "SAGA", "time": "2026-09-10 06:15", "signal": 26.1419, "xmed": 66.956, "xmean": 26.142, "z": 8.827, "pre_vs_base": 0.887, "close": 0.01365, "ret_15m": 0.00733, "ret_60m": 0.02051, "ret_240m": 0.02637, "ret_1440m": 0.34505, "label_15m": "STRONG", "label_60m": "STRONG", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 2.019, "volx_240m": 0.783, "mfe_240m": 0.0293, "mae_240m": -0.00806}, {"coin": "SAGA", "time": "2026-09-11 16:00", "signal": 13.4087, "xmed": 37.217, "xmean": 13.409, "z": 4.291, "pre_vs_base": 2.572, "close": 0.01666, "ret_15m": 0.0042, "ret_60m": -0.003, "ret_240m": -0.03541, "ret_1440m": -0.02461, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "FAIL", "label_1440m": "FAIL", "volx_60m": 3.586, "volx_240m": 2.881, "mfe_240m": 0.01741, "mae_240m": -0.04742}, {"coin": "SAGA", "time": "2026-09-11 20:15", "signal": 14.3812, "xmed": 40.098, "xmean": 14.381, "z": 4.642, "pre_vs_base": 1.774, "close": 0.01608, "ret_15m": 0.00311, "ret_60m": 0.03234, "ret_240m": 0.01119, "ret_1440m": -0.00124, "label_15m": "HOLD", "label_60m": "STRONG", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 3.716, "volx_240m": 3.333, "mfe_240m": 0.0342, "mae_240m": -0.0056}, {"coin": "SAGA", "time": "2026-09-13 09:30", "signal": 18.2369, "xmed": 51.15, "xmean": 18.237, "z": 5.997, "pre_vs_base": 2.819, "close": 0.01914, "ret_15m": 0.00575, "ret_60m": -0.02299, "ret_240m": 0.02456, "ret_1440m": -0.09404, "label_15m": "STRONG", "label_60m": "FAIL", "label_240m": "STRONG", "label_1440m": "FAIL", "volx_60m": 7.22, "volx_240m": 7.316, "mfe_240m": 0.05799, "mae_240m": -0.06635}, {"coin": "SAGA", "time": "2026-09-15 05:00", "signal": 15.2941, "xmed": 43.337, "xmean": 15.294, "z": 5.079, "pre_vs_base": 2.631, "close": 0.01881, "ret_15m": -0.00319, "ret_60m": 0.01223, "ret_240m": -0.01063, "ret_1440m": 0.25625, "label_15m": "HOLD", "label_60m": "STRONG", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 3.409, "volx_240m": 2.137, "mfe_240m": 0.02446, "mae_240m": -0.0202}, {"coin": "SAGA", "time": "2026-09-15 15:30", "signal": 24.2663, "xmed": 68.541, "xmean": 24.266, "z": 8.258, "pre_vs_base": 2.482, "close": 0.01924, "ret_15m": 0.01091, "ret_60m": -0.04002, "ret_240m": 0.05925, "ret_1440m": 0.04158, "label_15m": "STRONG", "label_60m": "FAIL", "label_240m": "STRONG", "label_1440m": "STRONG", "volx_60m": 9.923, "volx_240m": 12.956, "mfe_240m": 0.11486, "mae_240m": -0.04262}, {"coin": "SAGA", "time": "2026-09-16 19:00", "signal": 13.8014, "xmed": 43.222, "xmean": 13.801, "z": 4.508, "pre_vs_base": 2.332, "close": 0.02038, "ret_15m": -0.00589, "ret_60m": -0.00834, "ret_240m": -0.0422, "ret_1440m": 0.01374, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "FAIL", "label_1440m": "HOLD", "volx_60m": 2.779, "volx_240m": 4.108, "mfe_240m": 0.03435, "mae_240m": -0.04661}, {"coin": "SAGA", "time": "2026-09-19 01:00", "signal": 19.0626, "xmed": 63.101, "xmean": 19.063, "z": 6.741, "pre_vs_base": 2.293, "close": 0.02143, "ret_15m": 0.35558, "ret_60m": 0.19925, "ret_240m": 0.18432, "ret_1440m": 0.18199, "label_15m": "STRONG", "label_60m": "STRONG", "label_240m": "STRONG", "label_1440m": "STRONG", "volx_60m": 79.134, "volx_240m": 27.975, "mfe_240m": 0.39991, "mae_240m": 0.0}, {"coin": "SAGA", "time": "2026-09-23 00:30", "signal": 31.1818, "xmed": 131.825, "xmean": 31.182, "z": 9.421, "pre_vs_base": 1.597, "close": 0.03922, "ret_15m": -0.0102, "ret_60m": -0.02371, "ret_240m": -0.03595, "ret_1440m": 0.27231, "label_15m": "FAIL", "label_60m": "FAIL", "label_240m": "FAIL", "label_1440m": "STRONG", "volx_60m": 3.295, "volx_240m": 1.917, "mfe_240m": 0.01708, "mae_240m": -0.05201}, {"coin": "SAGA", "time": "2026-09-23 12:45", "signal": 11.2498, "xmed": 47.766, "xmean": 11.25, "z": 3.212, "pre_vs_base": 1.063, "close": 0.04314, "ret_15m": -0.00046, "ret_60m": 0.03292, "ret_240m": 0.02596, "ret_1440m": 0.05192, "label_15m": "HOLD", "label_60m": "STRONG", "label_240m": "STRONG", "label_1440m": "STRONG", "volx_60m": 11.285, "volx_240m": 8.516, "mfe_240m": 0.12193, "mae_240m": -0.02503}, {"coin": "SAGA", "time": "2026-09-24 14:00", "signal": 20.004, "xmed": 90.866, "xmean": 20.004, "z": 6.191, "pre_vs_base": 1.939, "close": 0.04588, "ret_15m": 0.01983, "ret_60m": -0.00588, "ret_240m": -0.00196, "ret_1440m": -0.23147, "label_15m": "STRONG", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "FAIL", "volx_60m": 5.976, "volx_240m": 3.514, "mfe_240m": 0.03226, "mae_240m": -0.04991}, {"coin": "SAGA", "time": "2026-09-25 05:30", "signal": 96.6582, "xmed": 441.657, "xmean": 96.658, "z": 31.635, "pre_vs_base": 2.487, "close": 0.05793, "ret_15m": 0.04695, "ret_60m": 0.19282, "ret_240m": 0.16537, "ret_1440m": -0.36717, "label_15m": "STRONG", "label_60m": "STRONG", "label_240m": "STRONG", "label_1440m": "FAIL", "volx_60m": 63.576, "volx_240m": 70.122, "mfe_240m": 0.56793, "mae_240m": -0.10754}, {"coin": "SAGA", "time": "2026-09-26 11:30", "signal": 47.5148, "xmed": 279.248, "xmean": 47.515, "z": 11.356, "pre_vs_base": 2.64, "close": 0.0371, "ret_15m": 0.10647, "ret_60m": 0.09084, "ret_240m": -0.04259, "ret_1440m": -0.169, "label_15m": "STRONG", "label_60m": "STRONG", "label_240m": "FAIL", "label_1440m": "FAIL", "volx_60m": 59.564, "volx_240m": 23.97, "mfe_240m": 0.23935, "mae_240m": -0.0903}, {"coin": "SAGA", "time": "2026-09-27 10:00", "signal": 11.9812, "xmed": 75.467, "xmean": 11.981, "z": 2.643, "pre_vs_base": 1.308, "close": 0.03233, "ret_15m": 0.00155, "ret_60m": -0.05165, "ret_240m": -0.1064, "ret_1440m": -0.18466, "label_15m": "HOLD", "label_60m": "FAIL", "label_240m": "FAIL", "label_1440m": "FAIL", "volx_60m": 5.137, "volx_240m": 4.272, "mfe_240m": 0.0034, "mae_240m": -0.11228}, {"coin": "SAGA", "time": "2026-09-27 14:00", "signal": 21.2403, "xmed": 134.357, "xmean": 21.24, "z": 4.899, "pre_vs_base": 1.621, "close": 0.02889, "ret_15m": -0.05192, "ret_60m": -0.06784, "ret_240m": -0.04258, "ret_1440m": -0.09, "label_15m": "FAIL", "label_60m": "FAIL", "label_240m": "FAIL", "label_1440m": "FAIL", "volx_60m": 22.929, "volx_240m": 10.326, "mfe_240m": 0.0, "mae_240m": -0.08238}, {"coin": "GTC", "time": "2026-08-30 07:30", "signal": 16.3824, "xmed": 87.625, "xmean": 16.382, "z": 5.734, "pre_vs_base": 0.002, "close": 0.08308, "ret_15m": 0.00169, "ret_60m": 0.00229, "ret_240m": 0.01023, "ret_1440m": -0.02431, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "FAIL", "volx_60m": 0.243, "volx_240m": 0.202, "mfe_240m": 0.01107, "mae_240m": 0.0}, {"coin": "GTC", "time": "2026-09-10 06:15", "signal": 10.1535, "xmed": 51.661, "xmean": 10.154, "z": 3.155, "pre_vs_base": 0.149, "close": 0.07787, "ret_15m": 0.0018, "ret_60m": 0.00604, "ret_240m": 0.00128, "ret_1440m": -0.02414, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "FAIL", "volx_60m": 0.736, "volx_240m": 0.629, "mfe_240m": 0.01259, "mae_240m": -0.00655}, {"coin": "GTC", "time": "2026-09-10 21:00", "signal": 10.4636, "xmed": 52.385, "xmean": 10.464, "z": 3.26, "pre_vs_base": 0.362, "close": 0.07587, "ret_15m": -0.00185, "ret_60m": 0.00804, "ret_240m": 0.0058, "ret_1440m": 0.00844, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 1.209, "volx_240m": 0.935, "mfe_240m": 0.00962, "mae_240m": -0.00672}, {"coin": "GTC", "time": "2026-09-18 21:45", "signal": 13.4097, "xmed": 61.717, "xmean": 13.41, "z": 4.183, "pre_vs_base": 1.605, "close": 0.08054, "ret_15m": -0.00695, "ret_60m": -0.00099, "ret_240m": 0.01589, "ret_1440m": 0.05078, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 1.999, "volx_240m": 2.054, "mfe_240m": 0.02595, "mae_240m": -0.00807}, {"coin": "GTC", "time": "2026-09-19 07:30", "signal": 11.2579, "xmed": 51.299, "xmean": 11.258, "z": 3.469, "pre_vs_base": 0.305, "close": 0.08185, "ret_15m": 0.0011, "ret_60m": 0.00452, "ret_240m": 0.02224, "ret_1440m": 0.04606, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "STRONG", "label_1440m": "STRONG", "volx_60m": 3.305, "volx_240m": 4.145, "mfe_240m": 0.02627, "mae_240m": -0.00794}, {"coin": "GTC", "time": "2026-09-19 11:30", "signal": 16.6239, "xmed": 75.498, "xmean": 16.624, "z": 5.307, "pre_vs_base": 2.583, "close": 0.08367, "ret_15m": -0.00872, "ret_60m": -0.00478, "ret_240m": -0.00896, "ret_1440m": 0.01805, "label_15m": "FAIL", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 1.278, "volx_240m": 2.894, "mfe_240m": 0.00048, "mae_240m": -0.02629}, {"coin": "GTC", "time": "2026-09-19 13:45", "signal": 12.1176, "xmed": 55.037, "xmean": 12.118, "z": 3.778, "pre_vs_base": 1.352, "close": 0.08185, "ret_15m": -0.00354, "ret_60m": 0.01442, "ret_240m": 0.04142, "ret_1440m": 0.02969, "label_15m": "HOLD", "label_60m": "STRONG", "label_240m": "STRONG", "label_1440m": "HOLD", "volx_60m": 5.035, "volx_240m": 3.673, "mfe_240m": 0.0474, "mae_240m": -0.00464}, {"coin": "GTC", "time": "2026-09-20 10:15", "signal": 10.8963, "xmed": 48.903, "xmean": 10.896, "z": 3.387, "pre_vs_base": 0.748, "close": 0.08675, "ret_15m": 0.00565, "ret_60m": -0.0234, "ret_240m": -0.02813, "ret_1440m": -0.03274, "label_15m": "HOLD", "label_60m": "FAIL", "label_240m": "FAIL", "label_1440m": "FAIL", "volx_60m": 2.947, "volx_240m": 2.087, "mfe_240m": 0.01049, "mae_240m": -0.03723}, {"coin": "GTC", "time": "2026-09-21 02:30", "signal": 16.2724, "xmed": 72.73, "xmean": 16.272, "z": 5.241, "pre_vs_base": 0.464, "close": 0.08508, "ret_15m": -0.0087, "ret_60m": -0.01575, "ret_240m": -0.00929, "ret_1440m": 0.02186, "label_15m": "FAIL", "label_60m": "FAIL", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 1.749, "volx_240m": 0.545, "mfe_240m": 0.00035, "mae_240m": -0.01928}, {"coin": "GTC", "time": "2026-09-21 13:00", "signal": 24.4798, "xmed": 109.738, "xmean": 24.48, "z": 8.057, "pre_vs_base": 1.144, "close": 0.0858, "ret_15m": -0.01317, "ret_60m": -0.00618, "ret_240m": 0.01457, "ret_1440m": 0.01445, "label_15m": "FAIL", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 2.018, "volx_240m": 0.951, "mfe_240m": 0.01795, "mae_240m": -0.01667}, {"coin": "GTC", "time": "2026-09-22 16:45", "signal": 12.813, "xmed": 55.962, "xmean": 12.813, "z": 4.053, "pre_vs_base": 2.481, "close": 0.0857, "ret_15m": 0.00502, "ret_60m": 0.00047, "ret_240m": 0.00012, "ret_1440m": 0.03781, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 0.867, "volx_240m": 0.888, "mfe_240m": 0.00525, "mae_240m": -0.01155}, {"coin": "GTC", "time": "2026-09-23 10:15", "signal": 19.1705, "xmed": 83.053, "xmean": 19.171, "z": 6.225, "pre_vs_base": 0.205, "close": 0.08743, "ret_15m": -0.00172, "ret_60m": 0.00275, "ret_240m": 0.01075, "ret_1440m": -0.04667, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "FAIL", "volx_60m": 2.729, "volx_240m": 1.167, "mfe_240m": 0.0143, "mae_240m": -0.00263}, {"coin": "GTC", "time": "2026-09-25 07:15", "signal": 10.6365, "xmed": 44.624, "xmean": 10.636, "z": 3.284, "pre_vs_base": 0.702, "close": 0.08523, "ret_15m": 0.00704, "ret_60m": 0.01725, "ret_240m": 0.00551, "ret_1440m": 0.08413, "label_15m": "STRONG", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 1.321, "volx_240m": 1.496, "mfe_240m": 0.02253, "mae_240m": -0.00035}, {"coin": "GTC", "time": "2026-09-25 20:15", "signal": 10.0684, "xmed": 41.726, "xmean": 10.068, "z": 3.106, "pre_vs_base": 2.531, "close": 0.0897, "ret_15m": 0.00011, "ret_60m": -0.00412, "ret_240m": 0.01081, "ret_1440m": 0.02754, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 3.27, "volx_240m": 5.926, "mfe_240m": 0.03846, "mae_240m": -0.0155}, {"coin": "GTC", "time": "2026-09-29 14:15", "signal": 18.0513, "xmed": 71.338, "xmean": 18.051, "z": 5.975, "pre_vs_base": 0.377, "close": 0.08607, "ret_15m": 0.00709, "ret_60m": 0.00256, "ret_240m": 0.00918, "ret_1440m": 0.04043, "label_15m": "STRONG", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 1.294, "volx_240m": 0.754, "mfe_240m": 0.01185, "mae_240m": -0.00023}, {"coin": "GTC", "time": "2026-09-29 23:15", "signal": 18.3852, "xmed": 71.828, "xmean": 18.385, "z": 6.104, "pre_vs_base": 0.761, "close": 0.08709, "ret_15m": -0.01275, "ret_60m": -0.01608, "ret_240m": 0.00322, "ret_1440m": 0.11379, "label_15m": "FAIL", "label_60m": "FAIL", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 1.189, "volx_240m": 2.263, "mfe_240m": 0.01217, "mae_240m": -0.02549}, {"coin": "GTC", "time": "2026-09-30 03:00", "signal": 21.4447, "xmed": 83.579, "xmean": 21.445, "z": 7.171, "pre_vs_base": 0.43, "close": 0.08807, "ret_15m": -0.00795, "ret_60m": -0.01692, "ret_240m": -0.01431, "ret_1440m": 0.06279, "label_15m": "HOLD", "label_60m": "FAIL", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 1.036, "volx_240m": 0.599, "mfe_240m": 0.00091, "mae_240m": -0.0193}, {"coin": "GTC", "time": "2026-10-01 13:45", "signal": 14.3313, "xmed": 72.852, "xmean": 14.331, "z": 2.055, "pre_vs_base": 2.98, "close": 0.09582, "ret_15m": -0.00908, "ret_60m": -0.00021, "ret_240m": 0.03882, "ret_1440m": 0.59685, "label_15m": "FAIL", "label_60m": "HOLD", "label_240m": "STRONG", "label_1440m": "STRONG", "volx_60m": 4.576, "volx_240m": 9.849, "mfe_240m": 0.06387, "mae_240m": -0.00908}, {"coin": "SAND", "time": "2026-09-02 19:15", "signal": 12.6004, "xmed": 29.172, "xmean": 12.6, "z": 3.63, "pre_vs_base": 1.397, "close": 0.0376, "ret_15m": 0.0016, "ret_60m": 0.01729, "ret_240m": 0.01144, "ret_1440m": 0.04415, "label_15m": "HOLD", "label_60m": "STRONG", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 6.712, "volx_240m": 3.354, "mfe_240m": 0.03112, "mae_240m": -0.00559}, {"coin": "SAND", "time": "2026-09-05 15:45", "signal": 10.4112, "xmed": 24.151, "xmean": 10.411, "z": 2.952, "pre_vs_base": 2.083, "close": 0.03946, "ret_15m": 0.00127, "ret_60m": -0.00253, "ret_240m": 0.00228, "ret_1440m": 0.0114, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 3.579, "volx_240m": 1.283, "mfe_240m": 0.00659, "mae_240m": -0.0076}, {"coin": "SAND", "time": "2026-09-08 02:45", "signal": 10.4103, "xmed": 24.269, "xmean": 10.41, "z": 2.935, "pre_vs_base": 0.682, "close": 0.04121, "ret_15m": -0.00704, "ret_60m": -0.00655, "ret_240m": -0.03179, "ret_1440m": -0.01747, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "FAIL", "label_1440m": "HOLD", "volx_60m": 0.884, "volx_240m": 0.843, "mfe_240m": -0.00146, "mae_240m": -0.0347}, {"coin": "SAND", "time": "2026-09-10 06:15", "signal": 17.8015, "xmed": 42.198, "xmean": 17.801, "z": 5.316, "pre_vs_base": 0.95, "close": 0.03697, "ret_15m": 0.0046, "ret_60m": 0.00298, "ret_240m": -0.0119, "ret_1440m": -0.04355, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "FAIL", "volx_60m": 1.803, "volx_240m": 2.125, "mfe_240m": 0.01082, "mae_240m": -0.01839}, {"coin": "SAND", "time": "2026-09-10 15:45", "signal": 13.2641, "xmed": 31.543, "xmean": 13.264, "z": 3.903, "pre_vs_base": 2.045, "close": 0.03585, "ret_15m": 0.00502, "ret_60m": 0.00446, "ret_240m": 0.01144, "ret_1440m": -0.01339, "label_15m": "STRONG", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 5.569, "volx_240m": 4.542, "mfe_240m": 0.01339, "mae_240m": -0.00642}, {"coin": "SAND", "time": "2026-09-10 18:15", "signal": 10.9401, "xmed": 26.118, "xmean": 10.94, "z": 3.171, "pre_vs_base": 1.591, "close": 0.03588, "ret_15m": -0.00056, "ret_60m": 0.00446, "ret_240m": -0.01087, "ret_1440m": -0.017, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 7.343, "volx_240m": 4.262, "mfe_240m": 0.01254, "mae_240m": -0.02815}, {"coin": "SAND", "time": "2026-09-10 21:00", "signal": 13.3261, "xmed": 31.918, "xmean": 13.326, "z": 3.946, "pre_vs_base": 2.764, "close": 0.03519, "ret_15m": -0.00199, "ret_60m": 0.0071, "ret_240m": -0.00625, "ret_1440m": 0.0179, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 2.619, "volx_240m": 2.732, "mfe_240m": 0.01478, "mae_240m": -0.01279}, {"coin": "SAND", "time": "2026-09-11 01:00", "signal": 10.2089, "xmed": 24.493, "xmean": 10.209, "z": 2.956, "pre_vs_base": 2.435, "close": 0.03497, "ret_15m": 0.00515, "ret_60m": 0.0143, "ret_240m": 0.01029, "ret_1440m": 0.02745, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 0.626, "volx_240m": 1.298, "mfe_240m": 0.02202, "mae_240m": -0.00229}, {"coin": "SAND", "time": "2026-09-16 03:00", "signal": 14.2274, "xmed": 33.226, "xmean": 14.227, "z": 4.301, "pre_vs_base": 0.732, "close": 0.03359, "ret_15m": -0.00387, "ret_60m": 0.00417, "ret_240m": -0.00179, "ret_1440m": -0.01727, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 1.167, "volx_240m": 0.853, "mfe_240m": 0.00595, "mae_240m": -0.01667}, {"coin": "SAND", "time": "2026-09-19 08:15", "signal": 32.2609, "xmed": 68.316, "xmean": 32.261, "z": 10.254, "pre_vs_base": 0.959, "close": 0.03922, "ret_15m": 0.00204, "ret_60m": -0.00382, "ret_240m": 0.01861, "ret_1440m": 0.02907, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 2.379, "volx_240m": 1.649, "mfe_240m": 0.02524, "mae_240m": -0.00943}, {"coin": "SAND", "time": "2026-09-20 11:30", "signal": 14.118, "xmed": 29.168, "xmean": 14.118, "z": 4.241, "pre_vs_base": 1.809, "close": 0.04052, "ret_15m": 0.01061, "ret_60m": -0.00864, "ret_240m": -0.02369, "ret_1440m": 0.00469, "label_15m": "STRONG", "label_60m": "HOLD", "label_240m": "FAIL", "label_1440m": "HOLD", "volx_60m": 3.502, "volx_240m": 2.092, "mfe_240m": 0.01283, "mae_240m": -0.0306}, {"coin": "SAND", "time": "2026-09-23 04:30", "signal": 19.0946, "xmed": 39.793, "xmean": 19.095, "z": 5.946, "pre_vs_base": 2.378, "close": 0.04296, "ret_15m": -0.00116, "ret_60m": -0.00442, "ret_240m": 0.0135, "ret_1440m": -0.06774, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "FAIL", "volx_60m": 2.808, "volx_240m": 3.254, "mfe_240m": 0.0277, "mae_240m": -0.00978}, {"coin": "SAND", "time": "2026-09-24 12:00", "signal": 11.7989, "xmed": 25.136, "xmean": 11.799, "z": 3.633, "pre_vs_base": 1.538, "close": 0.04016, "ret_15m": 0.00249, "ret_60m": 0.01494, "ret_240m": 0.01868, "ret_1440m": 0.07146, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 1.565, "volx_240m": 1.454, "mfe_240m": 0.02689, "mae_240m": -0.00398}, {"coin": "SAND", "time": "2026-09-24 22:30", "signal": 10.5679, "xmed": 22.539, "xmean": 10.568, "z": 3.23, "pre_vs_base": 2.733, "close": 0.04292, "ret_15m": -0.01025, "ret_60m": -0.02213, "ret_240m": -0.00792, "ret_1440m": 0.04357, "label_15m": "FAIL", "label_60m": "FAIL", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 2.808, "volx_240m": 2.068, "mfe_240m": 0.00373, "mae_240m": -0.03448}, {"coin": "SAND", "time": "2026-09-30 02:00", "signal": 10.8971, "xmed": 23.774, "xmean": 10.897, "z": 3.418, "pre_vs_base": 0.897, "close": 0.04293, "ret_15m": 0.00489, "ret_60m": 0.01304, "ret_240m": 0.0205, "ret_1440m": 0.0198, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 0.53, "volx_240m": 0.838, "mfe_240m": 0.02888, "mae_240m": -0.00047}, {"coin": "SAND", "time": "2026-10-02 00:00", "signal": 10.758, "xmed": 23.187, "xmean": 10.758, "z": 3.393, "pre_vs_base": 2.414, "close": 0.04405, "ret_15m": -0.00795, "ret_60m": -0.01725, "ret_240m": 0.00568, "ret_1440m": 0.40454, "label_15m": "HOLD", "label_60m": "FAIL", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 2.573, "volx_240m": 1.584, "mfe_240m": 0.01612, "mae_240m": -0.01793}, {"coin": "SAND", "time": "2026-10-02 13:15", "signal": 11.5729, "xmed": 24.898, "xmean": 11.573, "z": 3.684, "pre_vs_base": 1.497, "close": 0.04629, "ret_15m": -0.00065, "ret_60m": 0.00843, "ret_240m": 0.3949, "ret_1440m": NaN, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "STRONG", "label_1440m": NaN, "volx_60m": 8.395, "volx_240m": 95.028, "mfe_240m": 0.41067, "mae_240m": -0.00475}, {"coin": "QNT", "time": "2026-09-07 17:15", "signal": 17.8116, "xmed": 37.584, "xmean": 17.812, "z": 8.409, "pre_vs_base": 0.555, "close": 65.8, "ret_15m": 0.00015, "ret_60m": -0.00441, "ret_240m": 0.00821, "ret_1440m": 0.01109, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 0.527, "volx_240m": 0.957, "mfe_240m": 0.01109, "mae_240m": -0.01109}, {"coin": "QNT", "time": "2026-09-10 21:00", "signal": 10.7263, "xmed": 22.402, "xmean": 10.726, "z": 4.969, "pre_vs_base": 1.235, "close": 64.82, "ret_15m": 0.00231, "ret_60m": 0.00849, "ret_240m": 0.01003, "ret_1440m": 0.00401, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 1.153, "volx_240m": 0.756, "mfe_240m": 0.01728, "mae_240m": -0.00031}, {"coin": "QNT", "time": "2026-09-12 00:15", "signal": 10.6119, "xmed": 22.113, "xmean": 10.612, "z": 4.917, "pre_vs_base": 2.152, "close": 64.95, "ret_15m": -0.00446, "ret_60m": -0.00477, "ret_240m": -0.01109, "ret_1440m": -0.00985, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 0.778, "volx_240m": 1.585, "mfe_240m": -0.002, "mae_240m": -0.03033}, {"coin": "QNT", "time": "2026-09-12 02:15", "signal": 16.998, "xmed": 35.443, "xmean": 16.998, "z": 8.181, "pre_vs_base": 0.464, "close": 64.06, "ret_15m": 0.00047, "ret_60m": -0.00125, "ret_240m": -0.00905, "ret_1440m": 0.00406, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 0.484, "volx_240m": 0.655, "mfe_240m": 0.00265, "mae_240m": -0.01186}, {"coin": "QNT", "time": "2026-09-16 17:45", "signal": 12.0352, "xmed": 24.966, "xmean": 12.035, "z": 5.594, "pre_vs_base": 2.013, "close": 59.89, "ret_15m": -0.00301, "ret_60m": -0.00584, "ret_240m": -0.01069, "ret_1440m": 0.02855, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 0.851, "volx_240m": 1.151, "mfe_240m": 0.0157, "mae_240m": -0.01269}, {"coin": "QNT", "time": "2026-09-18 17:30", "signal": 11.8501, "xmed": 24.168, "xmean": 11.85, "z": 5.559, "pre_vs_base": 1.196, "close": 62.24, "ret_15m": 0.00129, "ret_60m": 0.01237, "ret_240m": 0.01864, "ret_1440m": 0.03004, "label_15m": "HOLD", "label_60m": "STRONG", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 2.102, "volx_240m": 3.652, "mfe_240m": 0.02089, "mae_240m": -0.00386}, {"coin": "QNT", "time": "2026-09-18 20:15", "signal": 21.4567, "xmed": 43.771, "xmean": 21.457, "z": 10.496, "pre_vs_base": 1.445, "close": 62.57, "ret_15m": -0.00304, "ret_60m": 0.01055, "ret_240m": 0.01646, "ret_1440m": 0.04651, "label_15m": "HOLD", "label_60m": "STRONG", "label_240m": "HOLD", "label_1440m": "HOLD", "volx_60m": 2.721, "volx_240m": 3.964, "mfe_240m": 0.03468, "mae_240m": -0.00799}, {"coin": "QNT", "time": "2026-09-22 06:30", "signal": 19.9337, "xmed": 40.224, "xmean": 19.934, "z": 10.198, "pre_vs_base": 1.201, "close": 67.09, "ret_15m": 0.00194, "ret_60m": -0.00268, "ret_240m": -0.00238, "ret_1440m": 0.09882, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 3.157, "volx_240m": 3.181, "mfe_240m": 0.00656, "mae_240m": -0.01833}, {"coin": "QNT", "time": "2026-09-22 13:15", "signal": 27.0795, "xmed": 54.939, "xmean": 27.079, "z": 14.041, "pre_vs_base": 1.551, "close": 67.52, "ret_15m": -0.00992, "ret_60m": -0.00074, "ret_240m": -0.004, "ret_1440m": 0.11685, "label_15m": "FAIL", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 5.19, "volx_240m": 3.096, "mfe_240m": 0.00874, "mae_240m": -0.01318}, {"coin": "QNT", "time": "2026-09-22 14:15", "signal": 16.0837, "xmed": 32.722, "xmean": 16.084, "z": 8.057, "pre_vs_base": 1.95, "close": 67.47, "ret_15m": -0.00356, "ret_60m": 0.00534, "ret_240m": 0.01452, "ret_1440m": 0.1076, "label_15m": "HOLD", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 3.531, "volx_240m": 2.878, "mfe_240m": 0.01452, "mae_240m": -0.00845}, {"coin": "QNT", "time": "2026-09-22 18:15", "signal": 10.7327, "xmed": 21.895, "xmean": 10.733, "z": 5.199, "pre_vs_base": 2.389, "close": 68.45, "ret_15m": 0.00234, "ret_60m": 0.01388, "ret_240m": 0.05917, "ret_1440m": 0.09627, "label_15m": "HOLD", "label_60m": "STRONG", "label_240m": "STRONG", "label_1440m": "STRONG", "volx_60m": 8.669, "volx_240m": 13.74, "mfe_240m": 0.09569, "mae_240m": -0.00599}, {"coin": "QNT", "time": "2026-09-23 09:45", "signal": 12.0255, "xmed": 25.174, "xmean": 12.026, "z": 5.782, "pre_vs_base": 1.352, "close": 75.53, "ret_15m": -0.00026, "ret_60m": -0.01602, "ret_240m": -0.00199, "ret_1440m": -0.07282, "label_15m": "HOLD", "label_60m": "FAIL", "label_240m": "HOLD", "label_1440m": "FAIL", "volx_60m": 3.061, "volx_240m": 1.993, "mfe_240m": 0.00477, "mae_240m": -0.01774}, {"coin": "QNT", "time": "2026-09-23 22:15", "signal": 15.5426, "xmed": 32.587, "xmean": 15.543, "z": 7.689, "pre_vs_base": 2.594, "close": 71.98, "ret_15m": -0.01, "ret_60m": -0.00153, "ret_240m": -0.01236, "ret_1440m": 0.10169, "label_15m": "FAIL", "label_60m": "HOLD", "label_240m": "HOLD", "label_1440m": "STRONG", "volx_60m": 7.683, "volx_240m": 4.217, "mfe_240m": 0.01778, "mae_240m": -0.0132}, {"coin": "QNT", "time": "2026-09-26 14:00", "signal": 14.973, "xmed": 40.059, "xmean": 14.973, "z": 4.948, "pre_vs_base": 2.642, "close": 100.85, "ret_15m": 0.02598, "ret_60m": 0.00506, "ret_240m": 0.06882, "ret_1440m": 0.69132, "label_15m": "STRONG", "label_60m": "HOLD", "label_240m": "STRONG", "label_1440m": "STRONG", "volx_60m": 20.783, "volx_240m": 17.562, "mfe_240m": 0.0709, "mae_240m": -0.01468}];
+function fmt(x) {
+  if (x === null || x === undefined || Number.isNaN(x)) return "—";
+  const v = x * 100;
+  const sign = v > 0 ? "+" : "";
+  return sign + v.toFixed(2) + "%";
+}
+function tag(lab) {
+  if (!lab) return "—";
+  return '<span class="tag '+lab+'">'+lab+'</span>';
+}
+function render() {
+  const coin = document.getElementById("coin").value;
+  const lab = document.getElementById("lab").value;
+  const q = document.getElementById("q").value.trim();
+  const rows = EVENTS.filter(e => (!coin || e.coin===coin) && (!lab || e.label_1440m===lab) && (!q || e.time.includes(q)));
+  const tb = document.querySelector("#ev tbody");
+  tb.innerHTML = rows.map(e => `<tr>
+    <td>${e.coin}</td><td>${e.time}</td>
+    <td>${e.signal.toFixed(1)}×</td>
+    <td>${e.pre_vs_base==null?"—":e.pre_vs_base.toFixed(2)}</td>
+    <td>${e.z==null?"—":e.z.toFixed(1)}</td>
+    <td>${fmt(e.ret_15m)}</td><td>${fmt(e.ret_60m)}</td><td>${fmt(e.ret_240m)}</td><td>${fmt(e.ret_1440m)}</td>
+    <td>${e.volx_60m==null?"—":e.volx_60m.toFixed(1)+"×"}</td>
+    <td>${tag(e.label_1440m)}</td></tr>`).join("");
+  document.getElementById("count").textContent = rows.length + " 筆";
+}
+document.getElementById("coin").onchange = render;
+document.getElementById("lab").onchange = render;
+document.getElementById("q").oninput = render;
+render();
+</script>
+</body>
+</html>

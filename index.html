@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>盯盤哨兵 · 回測報告</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, "Noto Sans TC", sans-serif; max-width: 42rem; margin: 2.5rem auto; padding: 0 1.25rem; line-height: 1.55; }
+    h1 { font-size: 1.45rem; margin-bottom: 0.25rem; }
+    p.lead { color: #555; margin-top: 0; }
+    @media (prefers-color-scheme: dark) { p.lead { color: #aaa; } }
+    ul { padding-left: 1.2rem; }
+    li { margin: 0.85rem 0; }
+    a { font-weight: 600; }
+    small { display: block; font-weight: 400; color: #666; margin-top: 0.15rem; }
+    @media (prefers-color-scheme: dark) { small { color: #999; } }
+  </style>
+</head>
+<body>
+  <h1>盯盤哨兵 · 回測報告</h1>
+  <p class="lead">四幣現貨（SAGA／GTC／SAND／QNT）的公開回測頁。資料截至約 2026-10-03（台北）。</p>
+  <ul>
+    <li>
+      <a href="quiet_surge_4coin_backtest.html">四幣「長期安靜 → 突然放量」回測</a>
+      <small>15 分 K，成交額 ≥ 過去 90 日均量 10 倍，且前 1 小時仍偏安靜。約 8/30～10/3。</small>
+    </li>
+    <li>
+      <a href="long_quiet_volume_surge_report.html">長期基準對照（1 天／1 週／1 月／3 月）</a>
+      <small>1m 與 15m 上，哪種長基準最能抓「安靜後突然放量」。</small>
+    </li>
+    <li>
+      <a href="box_breakout_four_spot_report.html">四幣箱型突破回測</a>
+      <small>正式雙層規則：3 日壓力、1m WARN、15m CONFIRM。2026-06-01～10-03。</small>
+    </li>
+    <li>
+      <a href="box_breakout_validity_monitor.html">箱體警報有效性監測</a>
+      <small>觸發後每分鐘量價是延續還是失效，以及 +15m 撤銷過濾。</small>
+    </li>
+  </ul>
+</body>
+</html>
